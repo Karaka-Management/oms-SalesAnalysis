@@ -8,13 +8,13 @@
  * @copyright Dennis Eichhorn
  * @license   OMS License 1.0
  * @version   1.0.0
- * @link      https://orange-management.org
+ * @link      https://jingga.app
  */
 declare(strict_types=1);
 
 return ['Navigation' => [
     'Analysis'  => 'Analysis',
-    'Customers' => 'Customers',
+    'Dashboard' => 'Dashboard',
     'Database'  => 'Database',
     'Invoices'  => 'Invoices',
     'Marketing' => 'Marketing',

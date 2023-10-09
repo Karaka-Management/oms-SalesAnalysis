@@ -1,190 +1,530 @@
 <?php
 /**
- * Orange Management
+ * Jingga
  *
- * PHP Version 7.4
+ * PHP Version 8.1
  *
  * @package   Modules\SalesAnalysis
  * @copyright Dennis Eichhorn
- * @license   OMS License 1.0
+ * @license   OMS License 2.0
  * @version   1.0.0
- * @link      https://orange-management.org
+ * @link      https://jingga.app
  */
 declare(strict_types=1);
+
+use phpOMS\Localization\ISO3166NameEnum;
+use phpOMS\Localization\Money;
+use phpOMS\Uri\UriFactory;
 
 /**
  * @var \phpOMS\Views\View $this
  */
+echo $this->data['nav']->render();
+?>
+<div class="row">
+    <div class="col-xs-12 col-lg-4">
+        <section class="portlet">
+        <form id="sales-dashboard-analysis" action="<?= UriFactory::build('{/backend}sales/analysis'); ?>" method="get">
+            <div class="portlet-body">
+                <div><?= $this->getHtml('Current'); ?></div>
+                <div class="form-group">
+                    <div class="input-control">
+                        <label for="iStartCurrent"><?= $this->getHtml('Start'); ?></label>
+                        <input id="iStartCurrent" name="startcurrent" type="date" value="<?= $this->data['startCurrent']->format('Y-m-d'); ?>">
+                    </div>
 
-echo $this->getData('nav')->render(); ?>
+                    <div class="input-control">
+                        <label for="iEndCurrent"><?= $this->getHtml('End'); ?></label>
+                        <input id="iEndCurrent" name="endcurrent" type="date" value="<?= $this->data['endCurrent']->format('Y-m-d'); ?>">
+                    </div>
+                </div>
 
-<div class="box w-100">
-    <div class="tabview tab-2">
-        <ul class="tab-links">
-            <li><label for="c-tab2-1"><?= $this->getHtml('Overview') ?></label>
-            <li><label for="c-tab2-2"><?= $this->getHtml('Month') ?></label>
-            <li><label for="c-tab2-3"><?= $this->getHtml('Year') ?></label>
-            <li><label for="c-tab2-4"><?= $this->getHtml('Top10') ?></label>
-            <li><label for="c-tab2-5"><?= $this->getHtml('Charts') ?></label>
-        </ul>
-        <div class="tab-content">
-            <input type="radio" id="c-tab2-1" name="tabular-2" checked>
-            <div class="tab">
-                <section class="box wf-100 floatLeft">
-                    <table class="default">
-                        <caption><?= $this->getHtml('Overview'); ?><i class="fa fa-download floatRight download btn"></i></caption>
-                        <thead>
-                        <tr>
-                            <td><?= $this->getHtml('Type') ?>
-                            <td><?= $this->getHtml('LastMonth') ?>
-                            <td><?= $this->getHtml('CurrentMonth') ?>
-                            <td><?= $this->getHtml('Change') ?>
-                            <td><?= $this->getHtml('LastYear') ?>
-                            <td><?= $this->getHtml('CurrentYear') ?>
-                            <td><?= $this->getHtml('Change') ?>
-                            <td><?= $this->getHtml('LastYearAcc') ?>
-                            <td><?= $this->getHtml('CurrentYearAcc') ?>
-                            <td><?= $this->getHtml('Change') ?>
-                            <td><?= $this->getHtml('LastYear') ?>
-                            <td><?= $this->getHtml('Forecast') ?>
-                            <td><?= $this->getHtml('Change') ?>
-                        <tbody>
-                            <tr><th><?= $this->getHtml('Domestic') ?><td><td><td><td><td><td><td><td><td><td><td><td>
-                            <tr><th><?= $this->getHtml('Export') ?><td><td><td><td><td><td><td><td><td><td><td><td>
-                            <tr><th><?= $this->getHtml('Developed') ?><td><td><td><td><td><td><td><td><td><td><td><td>
-                            <tr><th><?= $this->getHtml('Undeveloped') ?><td><td><td><td><td><td><td><td><td><td><td><td>
-                            <tr><th><?= $this->getHtml('Europe') ?><td><td><td><td><td><td><td><td><td><td><td><td>
-                            <tr><th><?= $this->getHtml('America') ?><td><td><td><td><td><td><td><td><td><td><td><td>
-                            <tr><th><?= $this->getHtml('Asia') ?><td><td><td><td><td><td><td><td><td><td><td><td>
-                            <tr><th><?= $this->getHtml('Africa') ?><td><td><td><td><td><td><td><td><td><td><td><td>
-                            <tr><th><?= $this->getHtml('Total') ?><td><td><td><td><td><td><td><td><td><td><td><td>
-                    </table>
-                </section>
+                <div><?= $this->getHtml('Comparison'); ?></div>
 
-                <section class="box wf-100 floatLeft">
+                <div class="form-group">
+                    <div class="input-control">
+                        <label for="iStartComparison"><?= $this->getHtml('Start'); ?></label>
+                        <input id="iStartComparison" name="startcomparison" type="date" value="<?= $this->data['startComparison']->format('Y-m-d'); ?>">
+                    </div>
+
+                    <div class="input-control">
+                        <label for="iEndComparison"><?= $this->getHtml('End'); ?></label>
+                        <input id="iEndComparison" name="endcomparison" type="date" value="<?= $this->data['endComparison']->format('Y-m-d'); ?>">
+                    </div>
+                </div>
+            </div>
+            <div class="portlet-foot">
+                <input id="iSubmitGeneral" name="submitGeneral" type="submit" value="<?= $this->getHtml('Analyze'); ?>">
+            </div>
+        </form>
+        </section>
+    </div>
+
+    <div class="col-xs-12 col-lg-4">
+        <section class="portlet highlight-3">
+            <div class="portlet-head"><?= $this->getHtml('Actual'); ?></div>
+            <div class="portlet-body">
+                <div class="form-group">
+                    <div><?= $this->getHtml('Sales'); ?> (<?= $this->getHtml('MTD'); ?>):</div>
+                    <div>&nbsp;<?= \sprintf('%+.2f', $this->data['mtdPY']['net_sales'] == 0 ? 0 : $this->data['mtdA']['net_sales'] * 100 / $this->data['mtdPY']['net_sales'] - 100); ?> %</div>
+                </div>
+
+                <div class="form-group">
+                    <div><?= $this->getHtml('Sales'); ?> (<?= $this->getHtml('YTD'); ?>):</div>
+                    <div>&nbsp;<?= \sprintf('%+.2f', $this->data['ytdPY']['net_sales'] == 0 ? 0 : $this->data['ytdA']['net_sales'] * 100 / $this->data['ytdPY']['net_sales'] - 100); ?> %</div>
+                </div>
+
+                <div class="form-group">
+                    <div><?= $this->getHtml('GrossProfit'); ?> (<?= $this->getHtml('MTD'); ?>):</div>
+                    <div>&nbsp;<?= \sprintf('%+.2f', $this->data['mtdPY']['net_profit'] == 0 ? 0 : $this->data['mtdA']['net_profit'] * 100 / $this->data['mtdPY']['net_profit'] - 100); ?> %</div>
+                </div>
+
+                <div class="form-group">
+                    <div><?= $this->getHtml('GrossProfit'); ?> (<?= $this->getHtml('YTD'); ?>):</div>
+                    <div>&nbsp;<?= \sprintf('%+.2f', $this->data['ytdPY']['net_profit'] == 0 ? 0 : $this->data['ytdA']['net_profit'] * 100 / $this->data['ytdPY']['net_profit'] - 100); ?> %</div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 col-lg-6">
+        <section class="portlet">
+            <div class="portlet-head">
+                <?= $this->getHtml('SalesProfit'); ?> (<?= $this->getHtml('monthly'); ?>)
+            </div>
+            <?php $sales = $this->data['monthlySales']; ?>
+            <div class="portlet-body">
+                <canvas id="sales-profit-monthly" data-chart='{
+                    "type": "bar",
+                    "data": {
+                        "labels": [
+                            <?php
+                                $temp = [];
+                                for ($i = 1; $i < 13; ++$i) {
+                                    $temp[] = \sprintf('"%02d"', $i);
+                                }
+                                echo \implode(',', $temp);
+                            ?>
+                        ],
+                        "datasets": [
+                            {
+                                "label": "<?= $this->getHtml('Profit'); ?> PY",
+                                "type": "line",
+                                "data": [
+                                    <?php
+                                        $temp = [];
+                                        for ($i = 0; $i < 12; ++$i) {
+                                            if (!isset($sales[1][$i]['net_sales']) || !isset($sales[1][$i]['net_profit'])) {
+                                                $temp[] = 'null';
+
+                                                continue;
+                                            }
+
+                                            $temp[] = $sales[1][$i]['net_sales'] == 0
+                                                ? 0
+                                                : $sales[1][$i]['net_profit'] * 100 / $sales[1][$i]['net_sales'];
+                                        }
+                                        echo \implode(',', $temp);
+                                    ?>
+                                ],
+                                "yAxisID": "y1",
+                                "fill": false,
+                                "tension": 0.0,
+                                "borderColor": "rgb(166, 193, 178)",
+                                "backgroundColor": "rgb(166, 193, 178)"
+                            },
+                            {
+                                "label": "<?= $this->getHtml('Profit'); ?> A",
+                                "type": "line",
+                                "data": [
+                                    <?php
+                                        $temp = [];
+                                        for ($i = 0; $i < 12; ++$i) {
+                                            if (!isset($sales[2][$i]['net_sales']) || !isset($sales[2][$i]['net_profit'])) {
+                                                $temp[] = 'null';
+
+                                                continue;
+                                            }
+
+                                            $temp[] = $sales[2][$i]['net_sales'] == 0
+                                                ? 0
+                                                : $sales[2][$i]['net_profit'] * 100 / $sales[2][$i]['net_sales'];
+                                        }
+                                        echo \implode(',', $temp);
+                                    ?>
+                                ],
+                                "yAxisID": "y1",
+                                "fill": false,
+                                "tension": 0.0,
+                                "borderColor": "rgb(46, 204, 113)",
+                                "backgroundColor": "rgb(46, 204, 113)"
+                            },
+                            {
+                                "label": "<?= $this->getHtml('Sales'); ?> PY",
+                                "type": "bar",
+                                "data": [
+                                    <?php
+                                        $temp = [];
+                                        for ($i = 0; $i < 12; ++$i) {
+                                            $temp[] = ($sales[1][$i]['net_sales'] ?? 0) / 10000;
+                                        }
+                                        echo \implode(',', $temp);
+                                    ?>
+                                ],
+                                "yAxisID": "y",
+                                "fill": false,
+                                "tension": 0.0,
+                                "backgroundColor": "rgb(177, 195, 206)"
+                            },
+                            {
+                                "label": "<?= $this->getHtml('Sales'); ?> A",
+                                "type": "bar",
+                                "data": [
+                                    <?php
+                                        $temp = [];
+                                        for ($i = 0; $i < 12; ++$i) {
+                                            $temp[] = ($sales[2][$i]['net_sales'] ?? 0) / 10000;
+                                        }
+                                        echo \implode(',', $temp);
+                                    ?>
+                                ],
+                                "yAxisID": "y",
+                                "fill": false,
+                                "tension": 0.0,
+                                "backgroundColor": "rgb(54, 162, 235)"
+                            }
+                        ]
+                    },
+                    "options": {
+                        "responsive": true,
+                        "scales": {
+                            "x": {
+                                "title": {
+                                    "display": true,
+                                    "text": "<?= $this->getHtml('Months'); ?>"
+                                }
+                            },
+                            "y": {
+                                "title": {
+                                    "display": true,
+                                    "text": "<?= $this->getHtml('Sales'); ?>"
+                                },
+                                "display": true,
+                                "position": "left"
+                            },
+                            "y1": {
+                                "title": {
+                                    "display": true,
+                                    "text": "<?= $this->getHtml('Profit'); ?> %"
+                                },
+                                "display": true,
+                                "position": "right",
+                                "scaleLabel": {
+                                    "display": true,
+                                    "labelString": "<?= $this->getHtml('Profit'); ?>"
+                                },
+                                "grid": {
+                                    "drawOnChartArea": false
+                                }
+                            }
+                        }
+                    }
+                }'></canvas>
+                <div class="more-container">
+                    <input id="more-customer-sales" type="checkbox" name="more-container">
+                    <label for="more-customer-sales">
+                        <span><?= $this->getHtml('Data'); ?></span>
+                        <i class="fa fa-chevron-right expand"></i>
+                    </label>
+                    <div class="slider">
                     <table class="default">
-                        <caption><?= $this->getHtml('Misc'); ?><i class="fa fa-download floatRight download btn"></i></caption>
                         <thead>
-                        <tr>
-                            <td><?= $this->getHtml('Type') ?>
-                            <td><?= $this->getHtml('LastYear') ?>
-                            <td><?= $this->getHtml('CurrentYear') ?>
-                            <td><?= $this->getHtml('LastMonth') ?>
-                            <td><?= $this->getHtml('CurrentMonth') ?>
-                            <td><?= $this->getHtml('Yesterday') ?>
-                            <td><?= $this->getHtml('Today') ?>
+                            <tr>
+                                <td><?= $this->getHtml('Month'); ?>
+                                <td><?= $this->getHtml('SalesPY'); ?>
+                                <td><?= $this->getHtml('SalesA'); ?>
+                                <td><?= $this->getHtml('ProfitPY'); ?>
+                                <td><?= $this->getHtml('ProfitA'); ?>
                         <tbody>
-                            <tr><th><?= $this->getHtml('Customers') ?><td><td><td><td><td><td>
-                            <tr><th><?= $this->getHtml('Invoices') ?><td><td><td><td><td><td>
+                            <?php
+                                $sum1 = 0;
+                                $sum2 = 0;
+                                $sum3 = 0;
+                                $sum4 = 0;
+                            for ($i = 0; $i < 12; ++$i) :
+                                $sum1 += (int) ($sales[1][$i]['net_sales'] ?? 0);
+                                $sum2 += (int) ($sales[2][$i]['net_sales'] ?? 0);
+                                $sum3 += (int) ($sales[1][$i]['net_profit'] ?? 0);
+                                $sum4 += (int) ($sales[2][$i]['net_profit'] ?? 0);
+                            ?>
+                                <tr>
+                                    <td><?= \sprintf('%02d', $i + 1); ?>
+                                    <td><?= $this->getCurrency((int) ($sales[1][$i]['net_sales'] ?? 0)); ?>
+                                    <td><?= $this->getCurrency((int) ($sales[2][$i]['net_sales'] ?? 0)); ?>
+                                    <td><?= \sprintf('%.2f', ($sales[1][$i]['net_sales'] ?? 0) == 0 ? 0 : $sales[1][$i]['net_profit'] * 100 / $sales[1][$i]['net_sales']); ?> %
+                                    <td><?= \sprintf('%.2f', ($sales[2][$i]['net_sales'] ?? 0) == 0 ? 0 : $sales[2][$i]['net_profit'] * 100 / $sales[2][$i]['net_sales']); ?> %
+                            <?php endfor; ?>
+                                <tr>
+                                    <td><?= $this->getHtml('Total'); ?>
+                                    <td><?= $this->getCurrency($sum1); ?>
+                                    <td><?= $this->getCurrency($sum2); ?>
+                                    <td><?= \sprintf('%.2f', $sum3 == 0 ? 0 : $sum1 / $sum3); ?> %
+                                    <td><?= \sprintf('%.2f', $sum3 == 0 ? 0 : $sum2 / $sum4); ?> %
                     </table>
-                </section>
+                    </div>
+                </div>
             </div>
-            <input type="radio" id="c-tab2-2" name="tabular-2">
-            <div class="tab">
-                <section class="box wf-100 floatLeft">
+        </section>
+    </div>
+
+    <div class="col-xs-12 col-lg-6">
+        <section class="portlet">
+            <div class="portlet-head">
+                <?= $this->getHtml('SalesProfit'); ?> (<?= $this->getHtml('annually'); ?>)
+            </div>
+            <?php $sales = $this->data['annualSales']; ?>
+            <div class="portlet-body">
+                <canvas id="sales-profit-annually" data-chart='{
+                    "type": "bar",
+                    "data": {
+                        "labels": [
+                            <?php
+                                $temp = [];
+                                for ($i = 1; $i < 11; ++$i) {
+                                    $temp[] = $sales[$i]['year'];
+                                }
+                                echo \implode(',', $temp);
+                            ?>
+                        ],
+                        "datasets": [
+                            {
+                                "label": "<?= $this->getHtml('Profit'); ?>",
+                                "type": "line",
+                                "data": [
+                                    <?php
+                                        $temp = [];
+                                        for ($i = 1; $i < 11; ++$i) {
+                                            if ($sales[$i]['net_sales'] === null || $sales[$i]['net_profit'] === null) {
+                                                $temp[] = 'null';
+
+                                                continue;
+                                            }
+
+                                            $temp[] = $sales[$i]['net_sales'] == 0
+                                                ? 0
+                                                : $sales[$i]['net_profit'] * 100 / $sales[$i]['net_sales'];
+                                        }
+                                        echo \implode(',', $temp);
+                                    ?>
+                                ],
+                                "yAxisID": "y1",
+                                "fill": false,
+                                "tension": 0.0,
+                                "borderColor": "rgb(46, 204, 113)",
+                                "backgroundColor": "rgb(46, 204, 113)"
+                            },
+                            {
+                                "label": "<?= $this->getHtml('Sales'); ?>",
+                                "type": "bar",
+                                "data": [
+                                    <?php
+                                        $temp = [];
+                                        for ($i = 1; $i < 11; ++$i) {
+                                            $temp[] = $sales[$i]['net_sales'] / 10000;
+                                        }
+                                        echo \implode(',', $temp);
+                                    ?>
+                                ],
+                                "yAxisID": "y",
+                                "fill": false,
+                                "tension": 0.0,
+                                "backgroundColor": "rgb(54, 162, 235)"
+                            }
+                        ]
+                    },
+                    "options": {
+                        "responsive": true,
+                        "scales": {
+                            "x": {
+                                "title": {
+                                    "display": true,
+                                    "text": "<?= $this->getHtml('Months'); ?>"
+                                }
+                            },
+                            "y": {
+                                "title": {
+                                    "display": true,
+                                    "text": "<?= $this->getHtml('Sales'); ?>"
+                                },
+                                "display": true,
+                                "position": "left"
+                            },
+                            "y1": {
+                                "title": {
+                                    "display": true,
+                                    "text": "<?= $this->getHtml('Profit'); ?> %"
+                                },
+                                "display": true,
+                                "position": "right",
+                                "scaleLabel": {
+                                    "display": true,
+                                    "labelString": "<?= $this->getHtml('Profit'); ?>"
+                                },
+                                "grid": {
+                                    "drawOnChartArea": false
+                                }
+                            }
+                        }
+                    }
+                }'></canvas>
+                <div class="more-container">
+                    <input id="more-customer-sales-annual" type="checkbox" name="more-container">
+                    <label for="more-customer-sales-annual">
+                        <span><?= $this->getHtml('Data'); ?></span>
+                        <i class="fa fa-chevron-right expand"></i>
+                    </label>
+                    <div class="slider">
                     <table class="default">
-                        <caption><?= $this->getHtml('Month'); ?><i class="fa fa-download floatRight download btn"></i></caption>
                         <thead>
-                        <tr>
-                            <td><?= $this->getHtml('Day') ?>
-                            <td><?= $this->getHtml('Day') ?>
-                            <td><?= $this->getHtml('LastMonth') ?>
-                            <td><?= $this->getHtml('CurrentMonth') ?>
-                            <td><?= $this->getHtml('Change') ?>
-                            <td><?= $this->getHtml('ChangeAcc') ?>
+                            <tr>
+                                <td><?= $this->getHtml('Year'); ?>
+                                <td><?= $this->getHtml('Sales'); ?>
+                                <td><?= $this->getHtml('Profit'); ?>
                         <tbody>
-                        <tr><td><td><td><td><td><td>
+                            <?php
+                            foreach ($sales as $values) :
+                            ?>
+                                <tr>
+                                    <td><?= (string) $values['year']; ?>
+                                    <td><?= $this->getCurrency(((int) $values['net_sales']) / 10000); ?>
+                                    <td><?= \sprintf('%.2f', $values['net_sales'] == 0 ? 0 : $values['net_profit'] * 100 / $values['net_sales']); ?> %
+                            <?php endforeach; ?>
                     </table>
-                </section>
+                    </div>
+                </div>
             </div>
-            <input type="radio" id="c-tab2-3" name="tabular-2">
-            <div class="tabview tab-3">
-                <section class="box wf-100 floatLeft">
-                    <table class="default">
-                        <caption><?= $this->getHtml('Year'); ?><i class="fa fa-download floatRight download btn"></i></caption>
-                        <thead>
+        </section>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <section class="portlet">
+            <div class="portlet-head">
+                <?= $this->getHtml('ItemAttribute'); ?>
+            </div>
+            <div class="slider">
+            <table class="default">
+                <thead>
+                    <tr>
+                        <td><?= $this->getHtml('Category'); ?>
+                        <td><?= $this->getHtml('SalesPY'); ?> (<?= $this->getHtml('YTD'); ?>)
+                        <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('YTD'); ?>)
+                        <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('YTD'); ?>)
+                        <td><?= $this->getHtml('SalesPY'); ?> (<?= $this->getHtml('MTD'); ?>)
+                        <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('MTD'); ?>)
+                        <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
+                <tbody>
+                    <?php foreach ($this->data['ytdAItemAttribute'] as $type => $values) : ?>
                         <tr>
-                            <td><?= $this->getHtml('Year') ?>
-                            <td><?= $this->getHtml('January') ?>
-                            <td><?= $this->getHtml('February') ?>
-                            <td><?= $this->getHtml('March') ?>
-                            <td><?= $this->getHtml('April') ?>
-                            <td><?= $this->getHtml('May') ?>
-                            <td><?= $this->getHtml('June') ?>
-                            <td><?= $this->getHtml('July') ?>
-                            <td><?= $this->getHtml('August') ?>
-                            <td><?= $this->getHtml('September') ?>
-                            <td><?= $this->getHtml('October') ?>
-                            <td><?= $this->getHtml('November') ?>
-                            <td><?= $this->getHtml('December') ?>
-                        <tbody>
-                        <tr><th>2013<td><td><td><td><td><td><td><td><td><td><td><td>
-                        <tr><th>2014<td><td><td><td><td><td><td><td><td><td><td><td>
-                        <tr><th>2015<td><td><td><td><td><td><td><td><td><td><td><td>
-                        <tr><th>CY 2016<td><td><td><td><td><td><td><td><td><td><td><td>
-                        <tr><th>2017<td><td><td><td><td><td><td><td><td><td><td><td>
-                        <tr><th>2018<td><td><td><td><td><td><td><td><td><td><td><td>
-                        <tr><th>2019<td><td><td><td><td><td><td><td><td><td><td><td>
-                        <tr><th>2020<td><td><td><td><td><td><td><td><td><td><td><td>
-                        <tr><th>2021<td><td><td><td><td><td><td><td><td><td><td><td>
-                    </table>
-                </section>
+                            <td><?= $this->printHtml($this->data['ytdPYItemAttribute'][$type]['value_l11n']); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency(
+                                ((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)) -
+                                ((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                            ); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency(
+                                ((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)) -
+                                ((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                            ); ?>
+                    <?php endforeach; ?>
+            </table>
             </div>
-            <input type="radio" id="c-tab2-4" name="tabular-2">
-            <div class="tabview tab-4">
-                <section class="box w-33 floatLeft">
-                    <header>
-                        <h1><?= $this->getHtml('Customers') ?></h1>
-                    </header>
-                    <div class="inner">
-                    </div>
-                </section>
-                <section class="box w-33 floatLeft">
-                    <header>
-                        <h1><?= $this->getHtml('Products') ?></h1>
-                    </header>
-                    <div class="inner">
-                    </div>
-                </section>
-                <section class="box w-33 floatLeft">
-                    <header>
-                        <h1><?= $this->getHtml('Employees') ?></h1>
-                    </header>
-                    <div class="inner">
-                    </div>
-                </section>
+       </section>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <section class="portlet">
+            <div class="portlet-head">
+                <?= $this->getHtml('ClientAttribute'); ?>
             </div>
-            <input type="radio" id="c-tab2-5" name="tabular-2">
-            <div class="tabview tab-5">
-                <section class="box w-33 floatLeft">
-                    <header>
-                        <h1><?= $this->getHtml('Domestic/Export') ?></h1>
-                    </header>
-                    <div class="inner">
-                    </div>
-                </section>
-                <section class="box w-33 floatLeft">
-                    <header>
-                        <h1><?= $this->getHtml('Developed/Undeveloped') ?></h1>
-                    </header>
-                    <div class="inner">
-                    </div>
-                </section>
-                <section class="box w-33 floatLeft">
-                    <header>
-                        <h1><?= $this->getHtml('Continents') ?></h1>
-                    </header>
-                    <div class="inner">
-                    </div>
-                </section>
-                <section class="box w-100 floatLeft">
-                    <header>
-                        <h1><?= $this->getHtml('Development') ?></h1>
-                    </header>
-                    <div class="inner">
-                    </div>
-                </section>
+            <div class="slider">
+            <table class="default">
+                <thead>
+                    <tr>
+                        <td><?= $this->getHtml('Category'); ?>
+                        <td><?= $this->getHtml('SalesPY'); ?> (<?= $this->getHtml('YTD'); ?>)
+                        <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('YTD'); ?>)
+                        <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('YTD'); ?>)
+                        <td><?= $this->getHtml('SalesPY'); ?> (<?= $this->getHtml('MTD'); ?>)
+                        <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('MTD'); ?>)
+                        <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
+                <tbody>
+                    <?php foreach ($this->data['ytdAClientAttribute'] as $type => $values) : ?>
+                        <tr>
+                            <td><?= $this->printHtml($this->data['ytdPYClientAttribute'][$type]['value_l11n']); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['ytdPYClientAttribute'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['ytdAClientAttribute'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency(
+                                ((int) ($this->data['ytdAClientAttribute'][$type]['net_sales'] ?? 0)) -
+                                ((int) ($this->data['ytdPYClientAttribute'][$type]['net_sales'] ?? 0))
+                            ); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['mtdPYClientAttribute'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['mtdAClientAttribute'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency(
+                                ((int) ($this->data['mtdAClientAttribute'][$type]['net_sales'] ?? 0)) -
+                                ((int) ($this->data['mtdPYClientAttribute'][$type]['net_sales'] ?? 0))
+                            ); ?>
+                    <?php endforeach; ?>
+            </table>
             </div>
-        </div>
+       </section>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <section class="portlet">
+            <div class="portlet-head">
+                <?= $this->getHtml('Country'); ?>
+            </div>
+            <div class="slider">
+            <table class="default">
+                <thead>
+                    <tr>
+                        <td><?= $this->getHtml('Country'); ?>
+                        <td><?= $this->getHtml('SalesPY'); ?> (<?= $this->getHtml('YTD'); ?>)
+                        <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('YTD'); ?>)
+                        <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('YTD'); ?>)
+                        <td><?= $this->getHtml('SalesPY'); ?> (<?= $this->getHtml('MTD'); ?>)
+                        <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('MTD'); ?>)
+                        <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
+                <tbody>
+                    <?php foreach ($this->data['ytdAClientCountry'] as $type => $values) : ?>
+                        <tr>
+                            <td><?= $this->printHtml(ISO3166NameEnum::getBy2Code($type)); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['ytdPYClientCountry'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['ytdAClientCountry'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency(
+                                ((int) ($this->data['ytdAClientCountry'][$type]['net_sales'] ?? 0)) -
+                                ((int) ($this->data['ytdPYClientCountry'][$type]['net_sales'] ?? 0))
+                            ); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['mtdPYClientCountry'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['mtdAClientCountry'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency(
+                                ((int) ($this->data['mtdAClientCountry'][$type]['net_sales'] ?? 0)) -
+                                ((int) ($this->data['mtdPYClientCountry'][$type]['net_sales'] ?? 0))
+                            ); ?>
+                    <?php endforeach; ?>
+            </table>
+            </div>
+       </section>
     </div>
 </div>

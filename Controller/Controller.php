@@ -8,24 +8,23 @@
  * @copyright Dennis Eichhorn
  * @license   OMS License 1.0
  * @version   1.0.0
- * @link      https://orange-management.org
+ * @link      https://jingga.app
  */
 declare(strict_types=1);
 
 namespace Modules\SalesAnalysis\Controller;
 
 use phpOMS\Module\ModuleAbstract;
-use phpOMS\Module\WebInterface;
 
 /**
  * Sales class.
  *
  * @package Modules\SalesAnalysis
  * @license OMS License 1.0
- * @link    https://orange-management.org
+ * @link    https://jingga.app
  * @since   1.0.0
  */
-class Controller extends ModuleAbstract implements WebInterface
+class Controller extends ModuleAbstract
 {
     /**
      * Module path.
@@ -33,7 +32,7 @@ class Controller extends ModuleAbstract implements WebInterface
      * @var string
      * @since 1.0.0
      */
-    public const MODULE_PATH = __DIR__ . '/../';
+    public const PATH = __DIR__ . '/../';
 
     /**
      * Module version.
@@ -65,7 +64,7 @@ class Controller extends ModuleAbstract implements WebInterface
      * @var string[]
      * @since 1.0.0
      */
-    protected static array $providing = [];
+    public static array $providing = [];
 
     /**
      * Dependencies.
@@ -73,5 +72,5 @@ class Controller extends ModuleAbstract implements WebInterface
      * @var string[]
      * @since 1.0.0
      */
-    protected static array $dependencies = [];
+    public static array $dependencies = [];
 }

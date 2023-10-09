@@ -11,13 +11,16 @@
         "phpOMS-db": "1.0.0"
     },
     "creator": {
-        "name": "Orange Management",
-        "website": "www.spl1nes.com"
+        "name": "Jingga",
+        "website": "jingga.app"
     },
     "description": "Sales module.",
     "directory": "SalesAnalysis",
     "dependencies": {
-        "Admin": "1.0.0"
+        "Admin": "1.0.0",
+        "Sales": "1.0.0",
+        "ClientManagement": "1.0.0",
+        "Billing": "1.0.0"
     },
     "providing": {
         "Navigation": "*"
