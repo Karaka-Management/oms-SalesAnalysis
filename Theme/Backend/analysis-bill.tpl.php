@@ -12,9 +12,6 @@
  */
 declare(strict_types=1);
 
-/* @todo: single month/quarter/fiscal year/calendar year */
-/* @todo: time range (<= 12 month = monthly view; else annual view/comparison) */
-
 /**
  * @var \phpOMS\Views\View $this
  */
