@@ -65,8 +65,8 @@ final class BackendController extends Controller
         $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-overview-dashboard');
         $view->data['nav'] = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
 
-        // @todo: limit bill type (invoice/credit note) (customers only)
-        // @todo: limit bill status
+        // @todo limit bill type (invoice/credit note) (customers only)
+        // @todo limit bill status
 
         $businessStart   = 1;
         $startOfYear     = SmartDateTime::createFromDateTime(SmartDateTime::startOfYear($businessStart));
@@ -235,7 +235,7 @@ final class BackendController extends Controller
             $businessStart
         );
 
-        $annualCountrySales = RegionMapper::annualSalesProfitCountry(clone $historyStart, $endCurrent);
+        $annualCountrySales = RegionMapper::salesProfitCountry($historyStart, $startCurrent, $startCurrent, $endCurrent);
 
         $view->data['ytdADomesticExport'] = RegionMapper::countryToRegion(
             $view->data['ytdAClientCountry'],

@@ -162,7 +162,7 @@ class GeneralMapper extends DataMapperFactory
         $historyStart->smartModify(-10);
 
         $oldIndex = 1;
-        // @todo: this calculation doesn't consider the start of the fiscal year
+        // @todo this calculation doesn't consider the start of the fiscal year
         $period = (int) (((((int) $results[0]['salesyear']) - ((int) $historyStart->format('Y'))) * 12
             - ((int) $results[0]['salesmonth']) + ((int) $historyStart->format('m'))) / 12 + 1);
 

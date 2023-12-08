@@ -38,7 +38,7 @@ class ClientMapper extends DataMapperFactory
     ) {
         $endCurrentIndex = SmartDateTime::calculateMonthIndex((int) $endCurrent->format('m'), $businessStart);
 
-        // @todo: this query doesn't return clients that have not segment etc. defined.
+        // @todo this query doesn't return clients that have not segment etc. defined.
         $query = new Builder(self::$db);
         $query->raw(
             'SELECT

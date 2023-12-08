@@ -27,7 +27,7 @@ use phpOMS\Stdlib\Base\SmartDateTime;
  * @link    https://jingga.app
  * @since   1.0.0
  *
- * @todo: the periods are wrong if they are disjunct (e.g. A vs PPY)
+ * @todo the periods are wrong if they are disjunct (e.g. A vs PPY)
  * solution: functions need a clear start-end time and then called twice for A vs PY comparison
  */
 class RegionMapper extends DataMapperFactory
@@ -146,7 +146,7 @@ class RegionMapper extends DataMapperFactory
         $annualCustomer = [];
 
         $oldIndex = 1;
-        // @todo: this calculation doesn't consider the start of the fiscal year
+        // @todo this calculation doesn't consider the start of the fiscal year
         $period = (int) (((((int) $results[0]['salesyear']) - ((int) $historyStart->format('Y'))) * 12
             - ((int) $results[0]['salesmonth']) + ((int) $historyStart->format('m'))) / 12 + 1);
 
@@ -190,7 +190,7 @@ class RegionMapper extends DataMapperFactory
         \DateTime $endComparison,
         int $businessStart = 1,
     ) : array {
-        // @todo: this cannot be correct since the same customer may buy something in two month (distinct is required over an actual period)
+        // @todo this cannot be correct since the same customer may buy something in two month (distinct is required over an actual period)
         $endCurrentIndex = SmartDateTime::calculateMonthIndex((int) $endCurrent->format('m'), $businessStart);
 
         $query = new Builder(self::$db);
@@ -287,17 +287,19 @@ class RegionMapper extends DataMapperFactory
         ];
     }
 
-    public static function annualSalesProfitCountry(
+    // @todo remove businessStart, that should be baked into the historyStart
+    // Explanation: in the past I had to compare periods which werent even business years!!!
+    public static function salesProfitCountry(
         SmartDateTime $historyStart,
-        \DateTime $endCurrent,
-        int $businessStart = 1
+        SmartDateTime $historyEnd,
+        \DateTime $currentStart,
+        \DateTime $currentEnd
     ) : array {
         $query = new Builder(self::$db);
         $query->raw(
             'SELECT
                 address_country,
-                YEAR(billing_bill_performance_date) as salesyear,
-                MONTH(billing_bill_performance_date) as salesmonth,
+                billing_bill_performance_date,
                 SUM(billing_bill_netsales) as netsales,
                 SUM(billing_bill_netprofit) as netprofit
             FROM billing_bill
@@ -307,60 +309,42 @@ class RegionMapper extends DataMapperFactory
                 ON clientmgmt_client_address = address_id
             WHERE
                 billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
-                AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
-            GROUP BY
-                address_country,
-                YEAR(billing_bill_performance_date),
-                MONTH(billing_bill_performance_date)
+                AND billing_bill_performance_date <= \'' . $currentEnd->format('Y-m-d') . '\'
             ORDER BY
-                YEAR(billing_bill_performance_date) ASC,
-                MONTH(billing_bill_performance_date) ASC,
+                billing_bill_performance_date ASC,
                 address_country'
         );
 
         $results = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
 
-        $annualSales = [];
-
-        $oldIndex = 1;
-        // @todo: this calculation doesn't consider the start of the fiscal year
-        $period = (int) (((((int) $results[0]['salesyear']) - ((int) $historyStart->format('Y'))) * 12
-            - ((int) $results[0]['salesmonth']) + ((int) $historyStart->format('m'))) / 12 + 1);
+        $sales = [];
+        $period = 0;
 
         foreach ($results as $result) {
-            $monthIndex = SmartDateTime::calculateMonthIndex((int) $result['salesmonth'], $businessStart);
-            if ($monthIndex < $oldIndex) {
-                $oldIndex = $monthIndex;
-
-                ++$period;
+            $date = new \DateTime($result['billing_bill_performance_date']);
+            if ($date->getTimestamp() <= $historyEnd->getTimestamp()) {
+                $period = 0;
+            } elseif ($date->getTimestamp() >= $currentStart->getTimestamp()) {
+                $period = 1;
+            } else {
+                continue;
             }
 
-            if ($period > 10) {
-                break;
-            }
-
-            $oldIndex = $monthIndex;
-
-            if (!isset($annualSales[$result['address_country']])) {
+            if (!isset($sales[$result['address_country']])) {
                 for ($i = 1; $i < 11; ++$i) {
-                    $annualSales[$result['address_country']][$i] = [
+                    $sales[$result['address_country']][$i] = [
                         'net_sales' => 0,
                         'net_profit' => 0,
-                        'year' => $historyStart->format('Y'),
+                        'year' => $period === 0 ? 'PY' : 'A',
                     ];
-
-                    $historyStart->smartModify(1);
                 }
-
-                $historyStart->smartModify(-10);
             }
 
-            // indexed according to the fiscal year
-            $annualSales[$result['address_country']][$period]['net_sales']  += (int) $result['netsales'];
-            $annualSales[$result['address_country']][$period]['net_profit'] += (int) $result['netprofit'];
+            $sales[$result['address_country']][$period]['net_sales']  += (int) $result['netsales'];
+            $sales[$result['address_country']][$period]['net_profit'] += (int) $result['netprofit'];
         }
 
-        return $annualSales;
+        return $sales;
     }
 
     public static function mtdYtdCountry(
