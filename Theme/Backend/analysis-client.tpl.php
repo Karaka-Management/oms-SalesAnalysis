@@ -21,10 +21,10 @@ echo $this->data['nav']->render();
 <div class="tabview tab-2">
     <div class="box">
         <ul class="tab-links">
-            <li><label for="c-tab-1"><?= $this->getHtml('All'); ?></label></li>
-            <li><label for="c-tab-2"><?= $this->getHtml('New'); ?></label></li>
-            <li><label for="c-tab-3"><?= $this->getHtml('Lost'); ?></label></li>
-            <!--<li><label for="c-tab-1"><?= $this->getHtml('Filter'); ?></label></li>-->
+            <li><label for="c-tab-1"><?= $this->getHtml('All'); ?></label>
+            <li><label for="c-tab-2"><?= $this->getHtml('New'); ?></label>
+            <li><label for="c-tab-3"><?= $this->getHtml('Lost'); ?></label>
+            <!--<li><label for="c-tab-1"><?= $this->getHtml('Filter'); ?></label>-->
         </ul>
     </div>
     <div class="tab-content">

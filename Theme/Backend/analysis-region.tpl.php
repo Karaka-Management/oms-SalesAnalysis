@@ -24,11 +24,11 @@ echo $this->data['nav']->render();
 <div class="tabview tab-2">
     <div class="box">
         <ul class="tab-links">
-            <li><label for="c-tab-1"><?= $this->getHtml('World'); ?></label></li>
-            <li><label for="c-tab-2"><?= $this->getHtml('DomesticExport'); ?></label></li>
-            <li><label for="c-tab-3"><?= $this->getHtml('Continents'); ?></label></li>
-            <li><label for="c-tab-4"><?= $this->getHtml('Regions'); ?></label></li>
-            <!--<li><label for="c-tab-5"><?= $this->getHtml('Filter'); ?></label></li>-->
+            <li><label for="c-tab-1"><?= $this->getHtml('World'); ?></label>
+            <li><label for="c-tab-2"><?= $this->getHtml('DomesticExport'); ?></label>
+            <li><label for="c-tab-3"><?= $this->getHtml('Continents'); ?></label>
+            <li><label for="c-tab-4"><?= $this->getHtml('Regions'); ?></label>
+            <!--<li><label for="c-tab-5"><?= $this->getHtml('Filter'); ?></label>-->
         </ul>
     </div>
     <div class="tab-content">
@@ -51,7 +51,7 @@ echo $this->data['nav']->render();
                                             $temp = [];
                                             foreach ($this->data['ytdAClientCountry'] as $lang => $values) {
                                                 $temp[] = '{"id": "' . ISO3166CharEnum::getBy2Code($lang) . '", "value": ' . ($values['net_sales'] / 10000) . '}';
-                                            }; ?>
+                                            } ?>
                                             <?= \implode(',', $temp); ?>
                                         ]
                                     }]
@@ -85,7 +85,7 @@ echo $this->data['nav']->render();
                             <?= $this->getHtml('Country'); ?>
                         </div>
                         <div class="slider">
-                        <table class="default">
+                        <table class="default sticky">
                             <thead>
                                 <tr>
                                     <td><?= $this->getHtml('Country'); ?>
@@ -273,7 +273,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Month'); ?>
@@ -463,7 +463,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Month'); ?>
@@ -507,7 +507,7 @@ echo $this->data['nav']->render();
             <div class="row">
                 <div class="col-xs-12 col-lg-4">
                     <section class="portlet">
-                        <div class="portlet-head"><?= $this->getHtml('Sales') ?> (<?= $this->getHtml('YTD'); ?>) - <?= $this->getHtml('DomesticExport') ?></div>
+                        <div class="portlet-head"><?= $this->getHtml('Sales'); ?> (<?= $this->getHtml('YTD'); ?>) - <?= $this->getHtml('DomesticExport'); ?></div>
                         <div class="portlet-body">
                             <canvas id="sales-domestic-export" data-chart='{
                                 "type": "pie",
@@ -539,7 +539,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Region'); ?>
@@ -582,7 +582,7 @@ echo $this->data['nav']->render();
                                         <?php
                                             $first = true;
                                             foreach ($this->data['annualDomesticExport'] as $region => $values) :
-                                            echo ($first ? '' : ',');
+                                            echo($first ? '' : ',');
                                             $first = false;
                                         ?>{
                                             "label": "<?= $this->printHtml($region); ?>",
@@ -614,7 +614,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Region'); ?>
@@ -648,7 +648,7 @@ echo $this->data['nav']->render();
             <div class="row">
                 <div class="col-xs-12 col-lg-4">
                     <section class="portlet">
-                        <div class="portlet-head"><?= $this->getHtml('Profit') ?> (<?= $this->getHtml('YTD'); ?>) - <?= $this->getHtml('DomesticExport') ?></div>
+                        <div class="portlet-head"><?= $this->getHtml('Profit'); ?> (<?= $this->getHtml('YTD'); ?>) - <?= $this->getHtml('DomesticExport'); ?></div>
                         <div class="portlet-body">
                             <canvas id="profit-domestic-export-region" data-chart='{
                                 "type": "pie",
@@ -680,7 +680,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Region'); ?>
@@ -723,7 +723,7 @@ echo $this->data['nav']->render();
                                         <?php
                                             $first = true;
                                             foreach ($this->data['annualDomesticExport'] as $region => $values) :
-                                            echo ($first ? '' : ',');
+                                            echo($first ? '' : ',');
                                             $first = false;
                                         ?>{
                                             "label": "<?= $this->printHtml($region); ?>",
@@ -765,7 +765,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Region'); ?>
@@ -799,7 +799,7 @@ echo $this->data['nav']->render();
             <div class="row">
                 <div class="col-xs-12 col-lg-4">
                     <section class="portlet">
-                        <div class="portlet-head"><?= $this->getHtml('Clients') ?> (<?= $this->getHtml('YTD'); ?>) - <?= $this->getHtml('DomesticExport') ?></div>
+                        <div class="portlet-head"><?= $this->getHtml('Clients'); ?> (<?= $this->getHtml('YTD'); ?>) - <?= $this->getHtml('DomesticExport'); ?></div>
                         <div class="portlet-body">
                             <canvas id="client-count-domestic-export" data-chart='{
                                 "type": "pie",
@@ -831,7 +831,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Region'); ?>
@@ -874,7 +874,7 @@ echo $this->data['nav']->render();
                                         <?php
                                             $first = true;
                                             foreach ($this->data['annualDomesticExportCount'] as $region => $values) :
-                                            echo ($first ? '' : ',');
+                                            echo($first ? '' : ',');
                                             $first = false;
                                         ?>{
                                             "label": "<?= $this->printHtml($region); ?>",
@@ -906,7 +906,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Region'); ?>
@@ -943,7 +943,7 @@ echo $this->data['nav']->render();
             <div class="row">
                 <div class="col-xs-12 col-lg-4">
                     <section class="portlet">
-                        <div class="portlet-head"><?= $this->getHtml('Sales') ?> (<?= $this->getHtml('YTD'); ?>) - <?= $this->getHtml('Continent') ?></div>
+                        <div class="portlet-head"><?= $this->getHtml('Sales'); ?> (<?= $this->getHtml('YTD'); ?>) - <?= $this->getHtml('Continent'); ?></div>
                         <div class="portlet-body">
                             <canvas id="sales-continent" data-chart='{
                                 "type": "pie",
@@ -975,7 +975,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Region'); ?>
@@ -1018,7 +1018,7 @@ echo $this->data['nav']->render();
                                         <?php
                                             $first = true;
                                             foreach ($this->data['annualContinent'] as $region => $values) :
-                                            echo ($first ? '' : ',');
+                                            echo($first ? '' : ',');
                                             $first = false;
                                         ?>{
                                             "label": "<?= $this->getHtml($region); ?>",
@@ -1050,7 +1050,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Region'); ?>
@@ -1084,7 +1084,7 @@ echo $this->data['nav']->render();
             <div class="row">
                 <div class="col-xs-12 col-lg-4">
                     <section class="portlet">
-                        <div class="portlet-head"><?= $this->getHtml('Profit') ?> (<?= $this->getHtml('YTD'); ?>) - <?= $this->getHtml('Continent') ?></div>
+                        <div class="portlet-head"><?= $this->getHtml('Profit'); ?> (<?= $this->getHtml('YTD'); ?>) - <?= $this->getHtml('Continent'); ?></div>
                         <div class="portlet-body">
                             <canvas id="profit-continent-region" data-chart='{
                                 "type": "pie",
@@ -1116,7 +1116,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Region'); ?>
@@ -1159,7 +1159,7 @@ echo $this->data['nav']->render();
                                         <?php
                                             $first = true;
                                             foreach ($this->data['annualContinent'] as $region => $values) :
-                                            echo ($first ? '' : ',');
+                                            echo($first ? '' : ',');
                                             $first = false;
                                         ?>{
                                             "label": "<?= $this->getHtml($region); ?>",
@@ -1201,7 +1201,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Region'); ?>
@@ -1235,7 +1235,7 @@ echo $this->data['nav']->render();
             <div class="row">
                 <div class="col-xs-12 col-lg-4">
                     <section class="portlet">
-                        <div class="portlet-head"><?= $this->getHtml('Clients') ?> (<?= $this->getHtml('YTD'); ?>) - <?= $this->getHtml('Continent') ?></div>
+                        <div class="portlet-head"><?= $this->getHtml('Clients'); ?> (<?= $this->getHtml('YTD'); ?>) - <?= $this->getHtml('Continent'); ?></div>
                         <div class="portlet-body">
                             <canvas id="client-count-continent" data-chart='{
                                 "type": "pie",
@@ -1267,7 +1267,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Region'); ?>
@@ -1310,7 +1310,7 @@ echo $this->data['nav']->render();
                                         <?php
                                             $first = true;
                                             foreach ($this->data['annualContinentCount'] as $region => $values) :
-                                            echo ($first ? '' : ',');
+                                            echo($first ? '' : ',');
                                             $first = false;
                                         ?>{
                                             "label": "<?= $this->printHtml($region); ?>",
@@ -1342,7 +1342,7 @@ echo $this->data['nav']->render();
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
                                 <div class="slider">
-                                <table class="default">
+                                <table class="default sticky">
                                     <thead>
                                         <tr>
                                             <td><?= $this->getHtml('Region'); ?>
@@ -1381,7 +1381,7 @@ echo $this->data['nav']->render();
                     <section class="portlet">
                         <div class="portlet-head"><?= $this->getHtml('Sales'); ?></div>
                         <div class="slider">
-                        <table class="default">
+                        <table class="default sticky">
                             <thead>
                                 <tr>
                                     <td><?= $this->getHtml('Region'); ?>

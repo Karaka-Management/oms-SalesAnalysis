@@ -42,16 +42,16 @@ omsApp.Modules.SalesAnalysis = class {
         const data = JSON.parse(chart.getAttribute('data-chart'));
 
         if (data.type === 'choropleth') {
-            const parts = data.mapurl.split('/');
+            const parts    = data.mapurl.split('/');
             const fileName = parts[parts.length - 1];
-            const mapName = fileName.replace('.topo.json', '');
+            const mapName  = fileName.replace('.topo.json', '');
 
             fetch(data.mapurl).then((r) => r.json()).then((d) => {
                 const countries = ChartGeo.topojson.feature(d, d.objects[mapName]).features;
 
                 data.data.labels = countries.map((c) => c.properties.name);
 
-                const vals = {};
+                const vals   = {};
                 const length = data.data.datasets[0].data.length;
                 for (let i = 0; i < length; ++i) {
                     vals[data.data.datasets[0].data[i].id] = data.data.datasets[0].data[i].value;
@@ -62,7 +62,7 @@ omsApp.Modules.SalesAnalysis = class {
                 ));
 
                 const myChart = new Chart(chart.getContext('2d'), data);
-        });
+            });
         } else {
             const myChart = new Chart(chart.getContext('2d'), data);
         }

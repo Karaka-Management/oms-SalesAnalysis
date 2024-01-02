@@ -13,7 +13,6 @@
 declare(strict_types=1);
 
 use phpOMS\Localization\ISO3166NameEnum;
-use phpOMS\Localization\Money;
 use phpOMS\Uri\UriFactory;
 
 /**
@@ -239,7 +238,7 @@ echo $this->data['nav']->render();
                         <i class="g-icon expand">chevron_right</i>
                     </label>
                     <div class="slider">
-                    <table class="default">
+                    <table class="default sticky">
                         <thead>
                             <tr>
                                 <td><?= $this->getHtml('Month'); ?>
@@ -386,7 +385,7 @@ echo $this->data['nav']->render();
                         <i class="g-icon expand">chevron_right</i>
                     </label>
                     <div class="slider">
-                    <table class="default">
+                    <table class="default sticky">
                         <thead>
                             <tr>
                                 <td><?= $this->getHtml('Year'); ?>
@@ -416,7 +415,7 @@ echo $this->data['nav']->render();
                 <?= $this->getHtml('ItemAttribute'); ?>
             </div>
             <div class="slider">
-            <table class="default">
+            <table class="default sticky">
                 <thead>
                     <tr>
                         <td><?= $this->getHtml('Category'); ?>
@@ -456,7 +455,7 @@ echo $this->data['nav']->render();
                 <?= $this->getHtml('ClientAttribute'); ?>
             </div>
             <div class="slider">
-            <table class="default">
+            <table class="default sticky">
                 <thead>
                     <tr>
                         <td><?= $this->getHtml('Category'); ?>
@@ -496,7 +495,7 @@ echo $this->data['nav']->render();
                 <?= $this->getHtml('Country'); ?>
             </div>
             <div class="slider">
-            <table class="default">
+            <table class="default sticky">
                 <thead>
                     <tr>
                         <td><?= $this->getHtml('Country'); ?>

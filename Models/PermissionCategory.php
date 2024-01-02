@@ -17,7 +17,7 @@ namespace Modules\SalesAnalysis\Models;
 use phpOMS\Stdlib\Base\Enum;
 
 /**
- * Permision state enum.
+ * Permission category enum.
  *
  * @package Modules\SalesAnalysis\Models
  * @license OMS License 1.0

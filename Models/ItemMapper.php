@@ -19,7 +19,7 @@ use phpOMS\DataStorage\Database\Query\Builder;
 use phpOMS\Stdlib\Base\SmartDateTime;
 
 /**
- * Permision state enum.
+ * Permission category enum.
  *
  * @package Modules\SalesAnalysis\Models
  * @license OMS License 1.0
@@ -86,10 +86,10 @@ class ItemMapper extends DataMapperFactory
         $oldIndex = 1;
         $period   = 1;
 
-        $mtdAItemAttribute = [];
+        $mtdAItemAttribute  = [];
         $mtdPYItemAttribute = [];
 
-        $ytdAItemAttribute = [];
+        $ytdAItemAttribute  = [];
         $ytdPYItemAttribute = [];
 
         foreach ($results as $result) {
@@ -108,7 +108,7 @@ class ItemMapper extends DataMapperFactory
 
             // indexed according to the fiscal year
             $temp = [
-                'net_sales' => (int) $result['netsales'],
+                'net_sales'  => (int) $result['netsales'],
                 'net_profit' => (int) $result['netprofit'],
             ];
 
@@ -127,13 +127,13 @@ class ItemMapper extends DataMapperFactory
             if ($monthIndex <= $endCurrentIndex) {
                 if (!isset($ytdPYItemAttribute[$result['itemmgmt_attr_type_name']])) {
                     $ytdPYItemAttribute[$result['itemmgmt_attr_type_name']] = [
-                        'net_sales' => 0,
+                        'net_sales'  => 0,
                         'net_profit' => 0,
                         'value_l11n' => $result['itemmgmt_attr_value_l11n_title'],
                     ];
 
                     $ytdAItemAttribute[$result['itemmgmt_attr_type_name']] = [
-                        'net_sales' => 0,
+                        'net_sales'  => 0,
                         'net_profit' => 0,
                         'value_l11n' => $result['itemmgmt_attr_value_l11n_title'],
                     ];
@@ -149,11 +149,11 @@ class ItemMapper extends DataMapperFactory
             }
         }
 
-       return [
+        return [
             $mtdAItemAttribute,
             $mtdPYItemAttribute,
             $ytdAItemAttribute,
             $ytdPYItemAttribute,
-       ];
+        ];
     }
 }

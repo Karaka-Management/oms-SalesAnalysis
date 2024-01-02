@@ -19,7 +19,7 @@ use phpOMS\DataStorage\Database\Query\Builder;
 use phpOMS\Stdlib\Base\SmartDateTime;
 
 /**
- * Permision state enum.
+ * Permission category enum.
  *
  * @package Modules\SalesAnalysis\Models
  * @license OMS License 1.0
@@ -64,15 +64,15 @@ class GeneralMapper extends DataMapperFactory
         $monthlySales = [];
         for ($i = 1; $i < 3; ++$i) {
             $monthlySales[$i] = \array_fill(0, 12, [
-                'net_sales' => null,
+                'net_sales'  => null,
                 'net_profit' => null,
             ]);
         }
 
-        $mtdA = ['net_sales' => 0, 'net_profit' => 0];
+        $mtdA  = ['net_sales' => 0, 'net_profit' => 0];
         $mtdPY = ['net_sales' => 0, 'net_profit' => 0];
 
-        $ytdA = ['net_sales' => 0, 'net_profit' => 0];
+        $ytdA  = ['net_sales' => 0, 'net_profit' => 0];
         $ytdPY = ['net_sales' => 0, 'net_profit' => 0];
 
         foreach ($results as $result) {
@@ -91,7 +91,7 @@ class GeneralMapper extends DataMapperFactory
 
             // indexed according to the fiscal year
             $monthlySales[$period][$monthIndex - 1] = [
-                'net_sales' => (int) $result['netsales'],
+                'net_sales'  => (int) $result['netsales'],
                 'net_profit' => (int) $result['netprofit'],
             ];
 
@@ -117,7 +117,7 @@ class GeneralMapper extends DataMapperFactory
         return [
             $mtdA, $mtdPY,
             $ytdA, $ytdPY,
-            $monthlySales
+            $monthlySales,
         ];
     }
 
@@ -126,7 +126,6 @@ class GeneralMapper extends DataMapperFactory
         \DateTime $endCurrent,
         int $businessStart = 1
     ) : array {
-
         $query = new Builder(self::$db);
         $query->raw(
             'SELECT
@@ -151,9 +150,9 @@ class GeneralMapper extends DataMapperFactory
         $annualSales = [];
         for ($i = 1; $i < 11; ++$i) {
             $annualSales[$i] = [
-                'net_sales' => null,
+                'net_sales'  => null,
                 'net_profit' => null,
-                'year' => $historyStart->format('Y'),
+                'year'       => $historyStart->format('Y'),
             ];
 
             $historyStart->smartModify(1);
@@ -184,7 +183,7 @@ class GeneralMapper extends DataMapperFactory
             $annualSales[$period]['net_sales']  ??= 0;
             $annualSales[$period]['net_profit'] ??= 0;
 
-            $annualSales[$period]['net_sales'] += (int) $result['netsales'];
+            $annualSales[$period]['net_sales']  += (int) $result['netsales'];
             $annualSales[$period]['net_profit'] += (int) $result['netprofit'];
         }
 

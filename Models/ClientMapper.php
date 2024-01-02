@@ -19,7 +19,7 @@ use phpOMS\DataStorage\Database\Query\Builder;
 use phpOMS\Stdlib\Base\SmartDateTime;
 
 /**
- * Permision state enum.
+ * Permission category enum.
  *
  * @package Modules\SalesAnalysis\Models
  * @license OMS License 1.0
@@ -84,10 +84,10 @@ class ClientMapper extends DataMapperFactory
         $oldIndex = 1;
         $period   = 1;
 
-        $mtdAClientAttribute = [];
+        $mtdAClientAttribute  = [];
         $mtdPYClientAttribute = [];
 
-        $ytdAClientAttribute = [];
+        $ytdAClientAttribute  = [];
         $ytdPYClientAttribute = [];
 
         foreach ($results as $result) {
@@ -106,7 +106,7 @@ class ClientMapper extends DataMapperFactory
 
             // indexed according to the fiscal year
             $temp = [
-                'net_sales' => (int) $result['netsales'],
+                'net_sales'  => (int) $result['netsales'],
                 'net_profit' => (int) $result['netprofit'],
             ];
 
@@ -125,13 +125,13 @@ class ClientMapper extends DataMapperFactory
             if ($monthIndex <= $endCurrentIndex) {
                 if (!isset($ytdPYClientAttribute[$result['clientmgmt_attr_type_name']])) {
                     $ytdPYClientAttribute[$result['clientmgmt_attr_type_name']] = [
-                        'net_sales' => 0,
+                        'net_sales'  => 0,
                         'net_profit' => 0,
                         'value_l11n' => $result['clientmgmt_attr_value_l11n_title'],
                     ];
 
                     $ytdAClientAttribute[$result['clientmgmt_attr_type_name']] = [
-                        'net_sales' => 0,
+                        'net_sales'  => 0,
                         'net_profit' => 0,
                         'value_l11n' => $result['clientmgmt_attr_value_l11n_title'],
                     ];
@@ -147,11 +147,11 @@ class ClientMapper extends DataMapperFactory
             }
         }
 
-       return [
+        return [
             $mtdAClientAttribute,
             $mtdPYClientAttribute,
             $ytdAClientAttribute,
             $ytdPYClientAttribute,
-       ];
+        ];
     }
 }

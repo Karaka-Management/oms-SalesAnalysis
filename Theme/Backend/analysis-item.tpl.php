@@ -21,11 +21,11 @@ echo $this->data['nav']->render();
 <div class="tabview tab-2">
     <div class="box">
         <ul class="tab-links">
-            <li><label for="c-tab-1"><?= $this->getHtml('Segment'); ?></label></li>
-            <li><label for="c-tab-2"><?= $this->getHtml('Section'); ?></label></li>
-            <li><label for="c-tab-3"><?= $this->getHtml('Group'); ?></label></li>
-            <li><label for="c-tab-4"><?= $this->getHtml('Type'); ?></label></li>
-            <!--<li><label for="c-tab-5"><?= $this->getHtml('Filter'); ?></label></li>-->
+            <li><label for="c-tab-1"><?= $this->getHtml('Segment'); ?></label>
+            <li><label for="c-tab-2"><?= $this->getHtml('Section'); ?></label>
+            <li><label for="c-tab-3"><?= $this->getHtml('Group'); ?></label>
+            <li><label for="c-tab-4"><?= $this->getHtml('Type'); ?></label>
+            <!--<li><label for="c-tab-5"><?= $this->getHtml('Filter'); ?></label>-->
         </ul>
     </div>
     <div class="tab-content">
@@ -36,7 +36,7 @@ echo $this->data['nav']->render();
                     <section class="portlet">
                         <div class="portlet-head"><?= $this->getHtml('Segment'); ?></div>
                         <div class="slider">
-                        <table class="default">
+                        <table class="default sticky">
                             <thead>
                                 <tr>
                                     <td><?= $this->getHtml('Category'); ?>
@@ -82,7 +82,7 @@ echo $this->data['nav']->render();
                     <section class="portlet">
                         <div class="portlet-head"><?= $this->getHtml('Section'); ?></div>
                         <div class="slider">
-                        <table class="default">
+                        <table class="default sticky">
                             <thead>
                                 <tr>
                                     <td><?= $this->getHtml('Category'); ?>
@@ -128,7 +128,7 @@ echo $this->data['nav']->render();
                     <section class="portlet">
                         <div class="portlet-head"><?= $this->getHtml('Group'); ?></div>
                         <div class="slider">
-                        <table class="default">
+                        <table class="default sticky">
                             <thead>
                                 <tr>
                                     <td><?= $this->getHtml('Category'); ?>
@@ -174,7 +174,7 @@ echo $this->data['nav']->render();
                     <section class="portlet">
                         <div class="portlet-head"><?= $this->getHtml('Type'); ?></div>
                         <div class="slider">
-                        <table class="default">
+                        <table class="default sticky">
                             <thead>
                                 <tr>
                                     <td><?= $this->getHtml('Category'); ?>

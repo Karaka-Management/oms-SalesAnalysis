@@ -20,7 +20,7 @@ use phpOMS\Localization\ISO3166TwoEnum;
 use phpOMS\Stdlib\Base\SmartDateTime;
 
 /**
- * Permision state enum.
+ * Permission category enum.
  *
  * @package Modules\SalesAnalysis\Models
  * @license OMS License 1.0
@@ -69,8 +69,8 @@ class RegionMapper extends DataMapperFactory
 
         $monthlySales = [];
 
-        $mtd  = [];
-        $ytd  = [];
+        $mtd = [];
+        $ytd = [];
 
         foreach ($results as $result) {
             $monthIndex = SmartDateTime::calculateMonthIndex((int) $result['salesmonth'], $businessStart);
@@ -86,7 +86,7 @@ class RegionMapper extends DataMapperFactory
 
                 for ($i = 1; $i < 3; ++$i) {
                     $monthlySales[$result['address_country']][$i] = \array_fill(1, 12, [
-                        'net_sales' => null,
+                        'net_sales'  => null,
                         'net_profit' => null,
                     ]);
                 }
@@ -94,7 +94,7 @@ class RegionMapper extends DataMapperFactory
 
             // indexed according to the fiscal year
             $monthlySales[$result['address_country']][$monthIndex] = [
-                'net_sales' => (int) $result['netsales'],
+                'net_sales'  => (int) $result['netsales'],
                 'net_profit' => (int) $result['netprofit'],
             ];
 
@@ -167,7 +167,7 @@ class RegionMapper extends DataMapperFactory
             if (!isset($annualCustomer[$result['address_country']])) {
                 for ($i = 1; $i < 11; ++$i) {
                     $annualCustomer[$result['address_country']][$i] = [
-                        'client_count' => 0
+                        'client_count' => 0,
                     ];
 
                     $historyStart->smartModify(1);
@@ -223,10 +223,10 @@ class RegionMapper extends DataMapperFactory
         $oldIndex = 1;
         $period   = 1;
 
-        $mtdAClientCountry = [];
+        $mtdAClientCountry  = [];
         $mtdPYClientCountry = [];
 
-        $ytdAClientCountry = [];
+        $ytdAClientCountry  = [];
         $ytdPYClientCountry = [];
 
         foreach ($results as $result) {
@@ -274,7 +274,7 @@ class RegionMapper extends DataMapperFactory
                 if ($period === 1) {
                     $ytdPYClientCountry[$result['address_country']]['client_count'] += $temp['client_count'];
                 } else {
-                    $ytdAClientCountry[$result['address_country']]['client_count']  += $temp['client_count'];
+                    $ytdAClientCountry[$result['address_country']]['client_count'] += $temp['client_count'];
                 }
             }
         }
@@ -317,7 +317,7 @@ class RegionMapper extends DataMapperFactory
 
         $results = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
 
-        $sales = [];
+        $sales  = [];
         $period = 0;
 
         foreach ($results as $result) {
@@ -333,9 +333,9 @@ class RegionMapper extends DataMapperFactory
             if (!isset($sales[$result['address_country']])) {
                 for ($i = 1; $i < 11; ++$i) {
                     $sales[$result['address_country']][$i] = [
-                        'net_sales' => 0,
+                        'net_sales'  => 0,
                         'net_profit' => 0,
-                        'year' => $period === 0 ? 'PY' : 'A',
+                        'year'       => $period === 0 ? 'PY' : 'A',
                     ];
                 }
             }
@@ -387,10 +387,10 @@ class RegionMapper extends DataMapperFactory
         $oldIndex = 1;
         $period   = 1;
 
-        $mtdAClientCountry = [];
+        $mtdAClientCountry  = [];
         $mtdPYClientCountry = [];
 
-        $ytdAClientCountry = [];
+        $ytdAClientCountry  = [];
         $ytdPYClientCountry = [];
 
         foreach ($results as $result) {
@@ -409,7 +409,7 @@ class RegionMapper extends DataMapperFactory
 
             // indexed according to the fiscal year
             $temp = [
-                'net_sales' => (int) $result['netsales'],
+                'net_sales'  => (int) $result['netsales'],
                 'net_profit' => (int) $result['netprofit'],
             ];
 
@@ -428,12 +428,12 @@ class RegionMapper extends DataMapperFactory
             if ($monthIndex <= $endCurrentIndex) {
                 if (!isset($ytdPYClientCountry[$result['address_country']])) {
                     $ytdPYClientCountry[$result['address_country']] = [
-                        'net_sales' => 0,
+                        'net_sales'  => 0,
                         'net_profit' => 0,
                     ];
 
                     $ytdAClientCountry[$result['address_country']] = [
-                        'net_sales' => 0,
+                        'net_sales'  => 0,
                         'net_profit' => 0,
                     ];
                 }
@@ -475,7 +475,7 @@ class RegionMapper extends DataMapperFactory
             foreach ($definitions as $r => $c) {
                 if (\in_array($country, $c)) {
                     foreach ($columns as $column) {
-                        $regions[$r][$column]  += $data[$column];
+                        $regions[$r][$column] += $data[$column];
                     }
 
                     $found = true;
@@ -484,7 +484,7 @@ class RegionMapper extends DataMapperFactory
 
             if (!$found) {
                 foreach ($columns as $column) {
-                    $regions['Other'][$column]  += $data[$column];
+                    $regions['Other'][$column] += $data[$column];
                 }
             }
         }
