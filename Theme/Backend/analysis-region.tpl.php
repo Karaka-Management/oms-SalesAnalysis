@@ -661,7 +661,7 @@ echo $this->data['nav']->render();
                                             <?php
                                             $temp = [];
                                             foreach ($this->data['ytdADomesticExport'] as $values) {
-                                                $temp[] =$values['net_profit'] / 10000;
+                                                $temp[] = $values['net_profit'] / 10000;
                                             }
                                             echo \implode(',', $temp);
                                             ?>
@@ -1097,7 +1097,7 @@ echo $this->data['nav']->render();
                                             <?php
                                             $temp = [];
                                             foreach ($this->data['ytdAContinent'] as $values) {
-                                                $temp[] =$values['net_profit'] / 10000;
+                                                $temp[] = $values['net_profit'] / 10000;
                                             }
                                             echo \implode(',', $temp);
                                             ?>
