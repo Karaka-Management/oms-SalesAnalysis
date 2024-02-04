@@ -288,7 +288,7 @@ class RegionMapper extends DataMapperFactory
     }
 
     // @todo remove businessStart, that should be baked into the historyStart
-    // Explanation: in the past I had to compare periods which werent even business years!!!
+    // Explanation: in the past I had to compare periods which weren't even business years!!!
     public static function salesProfitCountry(
         SmartDateTime $historyStart,
         SmartDateTime $historyEnd,

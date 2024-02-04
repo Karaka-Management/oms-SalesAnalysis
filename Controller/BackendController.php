@@ -64,8 +64,10 @@ final class BackendController extends Controller
         $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-overview-dashboard');
         $view->data['nav'] = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
 
-        // @todo limit bill type (invoice/credit note) (customers only)
-        // @todo limit bill status
+        // @bug Only analyze bills with a status and type that is relevant
+        //      For types it should be $isAccounting = true
+        //      For status it should be ARCHIVED
+        //      https://github.com/Karaka-Management/oms-SalesAnalysis/issues/34
 
         $businessStart   = 1;
         $startOfYear     = SmartDateTime::createFromDateTime(SmartDateTime::startOfYear($businessStart));
