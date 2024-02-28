@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Modules\SalesAnalysis\Models;
 
+use Modules\Billing\Models\BillTransferType;
 use phpOMS\DataStorage\Database\Mapper\DataMapperFactory;
 use phpOMS\DataStorage\Database\Query\Builder;
 use phpOMS\Stdlib\Base\SmartDateTime;
@@ -46,7 +47,8 @@ class GeneralMapper extends DataMapperFactory
                 SUM(billing_bill_netprofit) as netprofit
             FROM billing_bill
             WHERE
-                billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
+                billing_bill_type = ' . BillTransferType::SALES . '
+                AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
                 YEAR(billing_bill_performance_date),
@@ -135,7 +137,8 @@ class GeneralMapper extends DataMapperFactory
                 SUM(billing_bill_netprofit) as netprofit
             FROM billing_bill
             WHERE
-                billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
+                billing_bill_type = ' . BillTransferType::SALES . '
+                AND billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
                 YEAR(billing_bill_performance_date),

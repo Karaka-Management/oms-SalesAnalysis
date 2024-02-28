@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Modules\SalesAnalysis\Models;
 
+use Modules\Billing\Models\BillTransferType;
 use phpOMS\DataStorage\Database\Mapper\DataMapperFactory;
 use phpOMS\DataStorage\Database\Query\Builder;
 use phpOMS\Localization\ISO3166TwoEnum;
@@ -53,7 +54,8 @@ class RegionMapper extends DataMapperFactory
             LEFT JOIN address
                 ON clientmgmt_client_address = address_id
             WHERE
-                billing_bill_performance_date >= \'' . $start->format('Y-m-d') . '\'
+                billing_bill_type = ' . BillTransferType::SALES . '
+                AND billing_bill_performance_date >= \'' . $start->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $end->format('Y-m-d') . '\'
             GROUP BY
                 address_country,
@@ -129,7 +131,8 @@ class RegionMapper extends DataMapperFactory
             LEFT JOIN address
                 ON clientmgmt_client_address = address_id
             WHERE
-                billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
+                billing_bill_type = ' . BillTransferType::SALES . '
+                AND billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
                 address_country,
@@ -206,7 +209,8 @@ class RegionMapper extends DataMapperFactory
             LEFT JOIN address
                 ON clientmgmt_client_address = address_id
             WHERE
-                billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
+                billing_bill_type = ' . BillTransferType::SALES . '
+                AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
                 address_country,
@@ -308,8 +312,11 @@ class RegionMapper extends DataMapperFactory
             LEFT JOIN address
                 ON clientmgmt_client_address = address_id
             WHERE
-                billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
+                billing_bill_type = ' . BillTransferType::SALES . '
+                AND billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $currentEnd->format('Y-m-d') . '\'
+            GROUP BY
+                address_country, billing_bill_performance_date
             ORDER BY
                 billing_bill_performance_date ASC,
                 address_country'
@@ -370,7 +377,8 @@ class RegionMapper extends DataMapperFactory
             LEFT JOIN address
                 ON clientmgmt_client_address = address_id
             WHERE
-                billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
+                billing_bill_type = ' . BillTransferType::SALES . '
+                AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
                 address_country,
@@ -494,6 +502,10 @@ class RegionMapper extends DataMapperFactory
 
     public static function countryIntervalToRegion(array $countries, array $region, array $columns) : array
     {
+        if (empty($countries)) {
+            return [];
+        }
+
         $count = \count(\reset($countries));
 
         $tempStruct = [];

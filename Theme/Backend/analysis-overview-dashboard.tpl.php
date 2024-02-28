@@ -13,6 +13,7 @@
 declare(strict_types=1);
 
 use phpOMS\Localization\ISO3166NameEnum;
+use phpOMS\Stdlib\Base\FloatInt;
 use phpOMS\Uri\UriFactory;
 
 /**
@@ -60,7 +61,7 @@ echo $this->data['nav']->render();
     </div>
 
     <div class="col-xs-12 col-lg-4">
-        <section class="portlet highlight-3">
+        <section class="portlet hl-3">
             <div class="portlet-head"><?= $this->getHtml('Actual'); ?></div>
             <div class="portlet-body">
                 <div class="form-group">
@@ -167,7 +168,7 @@ echo $this->data['nav']->render();
                                     <?php
                                         $temp = [];
                                         for ($i = 0; $i < 12; ++$i) {
-                                            $temp[] = ($sales[1][$i]['net_sales'] ?? 0) / 10000;
+                                            $temp[] = ($sales[1][$i]['net_sales'] ?? 0) / FloatInt::DIVISOR;
                                         }
                                         echo \implode(',', $temp);
                                     ?>
@@ -184,7 +185,7 @@ echo $this->data['nav']->render();
                                     <?php
                                         $temp = [];
                                         for ($i = 0; $i < 12; ++$i) {
-                                            $temp[] = ($sales[2][$i]['net_sales'] ?? 0) / 10000;
+                                            $temp[] = ($sales[2][$i]['net_sales'] ?? 0) / FloatInt::DIVISOR;
                                         }
                                         echo \implode(',', $temp);
                                     ?>
@@ -270,7 +271,7 @@ echo $this->data['nav']->render();
                                     <td><?= $this->getCurrency($sum1); ?>
                                     <td><?= $this->getCurrency($sum2); ?>
                                     <td><?= \sprintf('%.2f', $sum3 == 0 ? 0 : $sum1 / $sum3); ?> %
-                                    <td><?= \sprintf('%.2f', $sum3 == 0 ? 0 : $sum2 / $sum4); ?> %
+                                    <td><?= \sprintf('%.2f', $sum4 == 0 ? 0 : $sum2 / $sum4); ?> %
                     </table>
                     </div>
                 </div>
@@ -331,7 +332,7 @@ echo $this->data['nav']->render();
                                     <?php
                                         $temp = [];
                                         for ($i = 1; $i < 11; ++$i) {
-                                            $temp[] = $sales[$i]['net_sales'] / 10000;
+                                            $temp[] = $sales[$i]['net_sales'] / FloatInt::DIVISOR;
                                         }
                                         echo \implode(',', $temp);
                                     ?>
@@ -396,8 +397,8 @@ echo $this->data['nav']->render();
                             foreach ($sales as $values) :
                             ?>
                                 <tr>
-                                    <td><?= (string) $values['year']; ?>
-                                    <td><?= $this->getCurrency(((int) $values['net_sales']) / 10000); ?>
+                                    <td>
+                                    <td><?= $this->getCurrency(((int) $values['net_sales']) / FloatInt::DIVISOR); ?>
                                     <td><?= \sprintf('%.2f', $values['net_sales'] == 0 ? 0 : $values['net_profit'] * 100 / $values['net_sales']); ?> %
                             <?php endforeach; ?>
                     </table>

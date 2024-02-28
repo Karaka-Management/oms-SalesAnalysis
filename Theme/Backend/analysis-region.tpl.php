@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 use phpOMS\Localization\ISO3166CharEnum;
 use phpOMS\Localization\ISO3166NameEnum;
+use phpOMS\Stdlib\Base\FloatInt;
 
 /**
  * @var \phpOMS\Views\View $this
@@ -50,7 +51,7 @@ echo $this->data['nav']->render();
                                             <?php
                                             $temp = [];
                                             foreach ($this->data['ytdAClientCountry'] as $lang => $values) {
-                                                $temp[] = '{"id": "' . ISO3166CharEnum::getBy2Code($lang) . '", "value": ' . ($values['net_sales'] / 10000) . '}';
+                                                $temp[] = '{"id": "' . ISO3166CharEnum::getBy2Code($lang) . '", "value": ' . ($values['net_sales'] / FloatInt::DIVISOR) . '}';
                                             } ?>
                                             <?= \implode(',', $temp); ?>
                                         ]
@@ -202,7 +203,7 @@ echo $this->data['nav']->render();
                                                 <?php
                                                     $temp = [];
                                                     for ($i = 1; $i < 13; ++$i) {
-                                                        $temp[] = ($sales[1][$this->data['domestic']][$i]['net_sales'] ?? 0) / 10000;
+                                                        $temp[] = ($sales[1][$this->data['domestic']][$i]['net_sales'] ?? 0) / FloatInt::DIVISOR;
                                                     }
                                                     echo \implode(',', $temp);
                                                 ?>
@@ -219,7 +220,7 @@ echo $this->data['nav']->render();
                                                 <?php
                                                     $temp = [];
                                                     for ($i = 1; $i < 13; ++$i) {
-                                                        $temp[] = ($sales[2][$this->data['domestic']][$i]['net_sales'] ?? 0) / 10000;
+                                                        $temp[] = ($sales[2][$this->data['domestic']][$i]['net_sales'] ?? 0) / FloatInt::DIVISOR;
                                                     }
                                                     echo \implode(',', $temp);
                                                 ?>
@@ -305,7 +306,7 @@ echo $this->data['nav']->render();
                                                 <td><?= $this->getCurrency($sum1); ?>
                                                 <td><?= $this->getCurrency($sum2); ?>
                                                 <td><?= \sprintf('%.2f', $sum3 == 0 ? 0 : $sum1 / $sum3); ?> %
-                                                <td><?= \sprintf('%.2f', $sum3 == 0 ? 0 : $sum2 / $sum4); ?> %
+                                                <td><?= \sprintf('%.2f', $sum4 == 0 ? 0 : $sum2 / $sum4); ?> %
                                 </table>
                                 </div>
                             </div>
@@ -392,7 +393,7 @@ echo $this->data['nav']->render();
                                                 <?php
                                                     $temp = [];
                                                     for ($i = 1; $i < 13; ++$i) {
-                                                        $temp[] = ($sales[1]['Other'][$i]['net_sales'] ?? 0) / 10000;
+                                                        $temp[] = ($sales[1]['Other'][$i]['net_sales'] ?? 0) / FloatInt::DIVISOR;
                                                     }
                                                     echo \implode(',', $temp);
                                                 ?>
@@ -409,7 +410,7 @@ echo $this->data['nav']->render();
                                                 <?php
                                                     $temp = [];
                                                     for ($i = 1; $i < 13; ++$i) {
-                                                        $temp[] = ($sales[2]['Other'][$i]['net_sales'] ?? 0) / 10000;
+                                                        $temp[] = ($sales[2]['Other'][$i]['net_sales'] ?? 0) / FloatInt::DIVISOR;
                                                     }
                                                     echo \implode(',', $temp);
                                                 ?>
@@ -495,7 +496,7 @@ echo $this->data['nav']->render();
                                                 <td><?= $this->getCurrency($sum1); ?>
                                                 <td><?= $this->getCurrency($sum2); ?>
                                                 <td><?= \sprintf('%.2f', $sum3 == 0 ? 0 : $sum1 / $sum3); ?> %
-                                                <td><?= \sprintf('%.2f', $sum3 == 0 ? 0 : $sum2 / $sum4); ?> %
+                                                <td><?= \sprintf('%.2f', $sum4 == 0 ? 0 : $sum2 / $sum4); ?> %
                                 </table>
                                 </div>
                             </div>
@@ -520,7 +521,7 @@ echo $this->data['nav']->render();
                                             <?php
                                             $temp = [];
                                             foreach ($this->data['ytdADomesticExport'] as $values) {
-                                                $temp[] = $values['net_sales'] / 10000;
+                                                $temp[] = $values['net_sales'] / FloatInt::DIVISOR;
                                             }
                                             echo \implode(',', $temp);
                                             ?>
@@ -591,7 +592,7 @@ echo $this->data['nav']->render();
                                                 <?php
                                                     $temp = [];
                                                     foreach ($values as $annual) {
-                                                        $temp[] = ((int) ($annual['net_sales'] ?? 0)) / 10000;
+                                                        $temp[] = ((int) ($annual['net_sales'] ?? 0)) / FloatInt::DIVISOR;
                                                     }
                                                     echo \implode(',', $temp);
                                                 ?>
@@ -661,7 +662,7 @@ echo $this->data['nav']->render();
                                             <?php
                                             $temp = [];
                                             foreach ($this->data['ytdADomesticExport'] as $values) {
-                                                $temp[] = $values['net_profit'] / 10000;
+                                                $temp[] = $values['net_profit'] / FloatInt::DIVISOR;
                                             }
                                             echo \implode(',', $temp);
                                             ?>
@@ -956,7 +957,7 @@ echo $this->data['nav']->render();
                                             <?php
                                             $temp = [];
                                             foreach ($this->data['ytdAContinent'] as $values) {
-                                                $temp[] = $values['net_sales'] / 10000;
+                                                $temp[] = $values['net_sales'] / FloatInt::DIVISOR;
                                             }
                                             echo \implode(',', $temp);
                                             ?>
@@ -1027,7 +1028,7 @@ echo $this->data['nav']->render();
                                                 <?php
                                                     $temp = [];
                                                     foreach ($values as $annual) {
-                                                        $temp[] = ((int) ($annual['net_sales'] ?? 0)) / 10000;
+                                                        $temp[] = ((int) ($annual['net_sales'] ?? 0)) / FloatInt::DIVISOR;
                                                     }
                                                     echo \implode(',', $temp);
                                                 ?>
@@ -1097,7 +1098,7 @@ echo $this->data['nav']->render();
                                             <?php
                                             $temp = [];
                                             foreach ($this->data['ytdAContinent'] as $values) {
-                                                $temp[] = $values['net_profit'] / 10000;
+                                                $temp[] = $values['net_profit'] / FloatInt::DIVISOR;
                                             }
                                             echo \implode(',', $temp);
                                             ?>

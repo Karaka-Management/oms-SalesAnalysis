@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Modules\SalesAnalysis\Models;
 
+use Modules\Billing\Models\BillTransferType;
 use phpOMS\DataStorage\Database\Mapper\DataMapperFactory;
 use phpOMS\DataStorage\Database\Query\Builder;
 use phpOMS\Stdlib\Base\SmartDateTime;
@@ -64,7 +65,8 @@ class ClientMapper extends DataMapperFactory
             LEFT JOIN clientmgmt_attr_value_l11n
                 ON clientmgmt_attr_value_id = clientmgmt_attr_value_l11n_value AND clientmgmt_attr_value_l11n_lang = \'' . $language . '\'
             WHERE
-                billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
+                billing_bill_type = ' . BillTransferType::SALES . '
+                AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
                 AND clientmgmt_attr_type_name IN (\'segment\', \'section\', \'client_group\', \'client_type\')
             GROUP BY
