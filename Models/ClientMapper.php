@@ -29,6 +29,9 @@ use phpOMS\Stdlib\Base\SmartDateTime;
  */
 class ClientMapper extends DataMapperFactory
 {
+    /**
+     * @todo Re-implement, still in use?
+     */
     public static function mtdYtdClientAttribute(
         \DateTime $startCurrent,
         \DateTime $endCurrent,
@@ -36,7 +39,8 @@ class ClientMapper extends DataMapperFactory
         \DateTime $endComparison,
         int $businessStart = 1,
         string $language = 'en'
-    ) {
+    ) : array
+    {
         $endCurrentIndex = SmartDateTime::calculateMonthIndex((int) $endCurrent->format('m'), $businessStart);
 
         // @todo this query doesn't return clients that have not segment etc. defined.
@@ -81,7 +85,7 @@ class ClientMapper extends DataMapperFactory
                 MONTH(billing_bill_performance_date) ASC'
         );
 
-        $results = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
 
         $oldIndex = 1;
         $period   = 1;

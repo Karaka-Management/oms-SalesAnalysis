@@ -33,11 +33,15 @@ use phpOMS\Stdlib\Base\SmartDateTime;
  */
 class RegionMapper extends DataMapperFactory
 {
+    /**
+     * @todo Re-implement, still in use?
+     */
     public static function monthlySalesProfit(
         \DateTime $start,
         \DateTime $end,
         int $businessStart = 1
-    ) {
+    ) : array
+    {
         $endCurrentIndex = SmartDateTime::calculateMonthIndex((int) $end->format('m'), $businessStart);
 
         $query = new Builder(self::$db);
@@ -67,7 +71,7 @@ class RegionMapper extends DataMapperFactory
                 address_country'
         );
 
-        $results = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
 
         $monthlySales = [];
 
@@ -113,6 +117,9 @@ class RegionMapper extends DataMapperFactory
         return [$mtd, $ytd, $monthlySales];
     }
 
+    /**
+     * @todo Re-implement, still in use?
+     */
     public static function annualCustomerCountry(
         SmartDateTime $historyStart,
         \DateTime $endCurrent,
@@ -144,7 +151,7 @@ class RegionMapper extends DataMapperFactory
                 address_country'
         );
 
-        $results = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
 
         $annualCustomer = [];
 
@@ -186,6 +193,9 @@ class RegionMapper extends DataMapperFactory
         return $annualCustomer;
     }
 
+    /**
+     * @todo Re-implement, still in use?
+     */
     public static function mtdYtdClientCountry(
         \DateTime $startCurrent,
         \DateTime $endCurrent,
@@ -222,7 +232,7 @@ class RegionMapper extends DataMapperFactory
                 address_country ASC'
         );
 
-        $results = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
 
         $oldIndex = 1;
         $period   = 1;
@@ -293,9 +303,12 @@ class RegionMapper extends DataMapperFactory
 
     // @todo remove businessStart, that should be baked into the historyStart
     // Explanation: in the past I had to compare periods which weren't even business years!!!
+    /**
+     * @todo Re-implement, still in use?
+     */
     public static function salesProfitCountry(
-        SmartDateTime $historyStart,
-        SmartDateTime $historyEnd,
+        \DateTime $historyStart,
+        \DateTime $historyEnd,
         \DateTime $currentStart,
         \DateTime $currentEnd
     ) : array {
@@ -322,7 +335,7 @@ class RegionMapper extends DataMapperFactory
                 address_country'
         );
 
-        $results = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
 
         $sales  = [];
         $period = 0;
@@ -354,6 +367,9 @@ class RegionMapper extends DataMapperFactory
         return $sales;
     }
 
+    /**
+     * @todo Re-implement, still in use?
+     */
     public static function mtdYtdCountry(
         \DateTime $startCurrent,
         \DateTime $endCurrent,
@@ -390,7 +406,7 @@ class RegionMapper extends DataMapperFactory
                 address_country ASC'
         );
 
-        $results = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
 
         $oldIndex = 1;
         $period   = 1;
@@ -464,6 +480,9 @@ class RegionMapper extends DataMapperFactory
         ];
     }
 
+    /**
+     * @todo Re-implement, still in use?
+     */
     public static function countryToRegion(array $countries, array $region, array $columns) : array
     {
         $tempStruct = [];
@@ -472,6 +491,7 @@ class RegionMapper extends DataMapperFactory
         }
 
         $regions = ['Other' => $tempStruct];
+        $definitions = [];
 
         foreach ($region as $r) {
             $definitions[$r] = ($temp = ISO3166TwoEnum::getRegion($r)) === [] ? [$r] : $temp;
@@ -500,6 +520,9 @@ class RegionMapper extends DataMapperFactory
         return $regions;
     }
 
+    /**
+     * @todo Re-implement, still in use?
+     */
     public static function countryIntervalToRegion(array $countries, array $region, array $columns) : array
     {
         if (empty($countries)) {
@@ -516,6 +539,8 @@ class RegionMapper extends DataMapperFactory
         $regions = [
             'Other' => \array_fill(1, $count, $tempStruct),
         ];
+
+        $definitions = [];
 
         foreach ($region as $r) {
             $definitions[$r] = ($temp = ISO3166TwoEnum::getRegion($r)) === [] ? [$r] : $temp;

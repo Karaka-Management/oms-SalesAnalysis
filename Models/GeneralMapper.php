@@ -29,13 +29,17 @@ use phpOMS\Stdlib\Base\SmartDateTime;
  */
 class GeneralMapper extends DataMapperFactory
 {
+    /**
+     * @todo Probably re-implement, still used?
+     */
     public static function monthlySalesProfit(
         \DateTime $startCurrent,
         \DateTime $endCurrent,
         \DateTime $startComparison,
         \DateTime $endComparison,
         int $businessStart = 1
-    ) {
+    ) : array
+    {
         $endCurrentIndex = SmartDateTime::calculateMonthIndex((int) $endCurrent->format('m'), $businessStart);
 
         $query = new Builder(self::$db);
@@ -58,7 +62,7 @@ class GeneralMapper extends DataMapperFactory
                 MONTH(billing_bill_performance_date) ASC'
         );
 
-        $results = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
 
         $oldIndex = 1;
         $period   = 1;
@@ -123,6 +127,9 @@ class GeneralMapper extends DataMapperFactory
         ];
     }
 
+    /**
+     * @todo Probably re-implement, still used?
+     */
     public static function annualSalesProfit(
         SmartDateTime $historyStart,
         \DateTime $endCurrent,
@@ -148,7 +155,7 @@ class GeneralMapper extends DataMapperFactory
                 MONTH(billing_bill_performance_date) ASC'
         );
 
-        $results = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
 
         $annualSales = [];
         for ($i = 1; $i < 11; ++$i) {
