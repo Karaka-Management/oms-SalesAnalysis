@@ -4,7 +4,7 @@
  *
  * PHP Version 8.1
  *
- * @package   Modules\Sales
+ * @package   Modules\SalesAnalysis
  * @copyright Dennis Eichhorn
  * @license   OMS License 2.0
  * @version   1.0.0
@@ -12,12 +12,12 @@
  */
 declare(strict_types=1);
 
-namespace Modules\Sales\Controller;
+namespace Modules\SalesAnalysis\Controller;
 
 /**
- * Sales api controller class.
+ * SalesAnalysis api controller class.
  *
- * @package Modules\Sales
+ * @package Modules\SalesAnalysis
  * @license OMS License 2.0
  * @link    https://jingga.app
  * @since   1.0.0
