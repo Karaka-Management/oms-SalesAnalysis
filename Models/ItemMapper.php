@@ -53,9 +53,11 @@ class ItemMapper extends DataMapperFactory
                 itemmgmt_attr_value_l11n_title,
                 YEAR(billing_bill_performance_date) as salesyear,
                 MONTH(billing_bill_performance_date) as salesmonth,
-                SUM(billing_bill_element_total_netsalesprice) as netsales,
-                SUM(billing_bill_element_total_netprofit) as netprofit
+                SUM(billing_bill_element_total_netsalesprice * billing_type_transfer_sign) as netsales,
+                SUM(billing_bill_element_total_netprofit * billing_type_transfer_sign) as netprofit
             FROM billing_bill
+            LEFT JOIN billing_type
+                ON billing_bill_type = billing_type_id
             LEFT JOIN billing_bill_element
                 ON billing_bill_id = billing_bill_element_bill
             LEFT JOIN itemmgmt_item
@@ -71,10 +73,11 @@ class ItemMapper extends DataMapperFactory
             LEFT JOIN itemmgmt_attr_value_l11n
                 ON itemmgmt_attr_value_id = itemmgmt_attr_value_l11n_value AND itemmgmt_attr_value_l11n_lang = \'' . $language . '\'
             WHERE
-                billing_bill_type = ' . BillTransferType::SALES . '
+                billing_type_transfer_type = ' . BillTransferType::SALES . '
+                AND billing_type_accounting = 1
                 AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
-                AND itemmgmt_attr_type_name IN (\'segment\', \'section\', \'product_group\', \'product_type\')
+                AND itemmgmt_attr_type_name IN (\'segment\', \'section\', \'sales_group\', \'product_group\', \'product_type\')
             GROUP BY
                 itemmgmt_attr_type_name,
                 itemmgmt_attr_type_l11n_title,

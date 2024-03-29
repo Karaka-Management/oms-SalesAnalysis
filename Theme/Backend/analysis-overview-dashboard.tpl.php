@@ -24,7 +24,7 @@ echo $this->data['nav']->render();
 <div class="row">
     <div class="col-xs-12 col-lg-4">
         <section class="portlet">
-        <form id="sales-dashboard-analysis" action="<?= UriFactory::build('{/backend}sales/analysis'); ?>" method="get">
+        <form id="sales-dashboard-analysis" action="<?= UriFactory::build('{/base}/sales/analysis?csrf={$CSRF}'); ?>" method="get">
             <div class="portlet-body">
                 <div><?= $this->getHtml('Current'); ?></div>
                 <div class="form-group">
@@ -124,7 +124,7 @@ echo $this->data['nav']->render();
 
                                             $temp[] = $sales[1][$i]['net_sales'] == 0
                                                 ? 0
-                                                : $sales[1][$i]['net_profit'] * 100 / $sales[1][$i]['net_sales'];
+                                                : \number_format($sales[1][$i]['net_profit'] * 100 / $sales[1][$i]['net_sales'], 2);
                                         }
                                         echo \implode(',', $temp);
                                     ?>
@@ -150,7 +150,7 @@ echo $this->data['nav']->render();
 
                                             $temp[] = $sales[2][$i]['net_sales'] == 0
                                                 ? 0
-                                                : $sales[2][$i]['net_profit'] * 100 / $sales[2][$i]['net_sales'];
+                                                : \number_format($sales[2][$i]['net_profit'] * 100 / $sales[2][$i]['net_sales'], 2);
                                         }
                                         echo \implode(',', $temp);
                                     ?>
@@ -259,19 +259,19 @@ echo $this->data['nav']->render();
                                 $sum3 += (int) ($sales[1][$i]['net_profit'] ?? 0);
                                 $sum4 += (int) ($sales[2][$i]['net_profit'] ?? 0);
                             ?>
-                                <tr>
-                                    <td><?= \sprintf('%02d', $i + 1); ?>
-                                    <td><?= $this->getCurrency((int) ($sales[1][$i]['net_sales'] ?? 0)); ?>
-                                    <td><?= $this->getCurrency((int) ($sales[2][$i]['net_sales'] ?? 0)); ?>
-                                    <td><?= \sprintf('%.2f', ($sales[1][$i]['net_sales'] ?? 0) == 0 ? 0 : $sales[1][$i]['net_profit'] * 100 / $sales[1][$i]['net_sales']); ?> %
-                                    <td><?= \sprintf('%.2f', ($sales[2][$i]['net_sales'] ?? 0) == 0 ? 0 : $sales[2][$i]['net_profit'] * 100 / $sales[2][$i]['net_sales']); ?> %
+                            <tr>
+                                <td><?= \sprintf('%02d', $i + 1); ?>
+                                <td><?= $this->getCurrency((int) ($sales[1][$i]['net_sales'] ?? 0), symbol: ''); ?>
+                                <td><?= $this->getCurrency((int) ($sales[2][$i]['net_sales'] ?? 0), symbol: ''); ?>
+                                <td><?= \sprintf('%.2f', ($sales[1][$i]['net_sales'] ?? 0) == 0 ? 0 : $sales[1][$i]['net_profit'] * 100 / $sales[1][$i]['net_sales']); ?> %
+                                <td><?= \sprintf('%.2f', ($sales[2][$i]['net_sales'] ?? 0) == 0 ? 0 : $sales[2][$i]['net_profit'] * 100 / $sales[2][$i]['net_sales']); ?> %
                             <?php endfor; ?>
-                                <tr>
-                                    <td><?= $this->getHtml('Total'); ?>
-                                    <td><?= $this->getCurrency($sum1); ?>
-                                    <td><?= $this->getCurrency($sum2); ?>
-                                    <td><?= \sprintf('%.2f', $sum3 == 0 ? 0 : $sum1 / $sum3); ?> %
-                                    <td><?= \sprintf('%.2f', $sum4 == 0 ? 0 : $sum2 / $sum4); ?> %
+                            <tr>
+                                <td><?= $this->getHtml('Total'); ?>
+                                <td><?= $this->getCurrency($sum1, symbol: ''); ?>
+                                <td><?= $this->getCurrency($sum2, symbol: ''); ?>
+                                <td><?= \sprintf('%.2f', $sum3 == 0 ? 0 : $sum1 / $sum3); ?> %
+                                <td><?= \sprintf('%.2f', $sum4 == 0 ? 0 : $sum2 / $sum4); ?> %
                     </table>
                     </div>
                 </div>
@@ -393,14 +393,14 @@ echo $this->data['nav']->render();
                                 <td><?= $this->getHtml('Sales'); ?>
                                 <td><?= $this->getHtml('Profit'); ?>
                         <tbody>
-                            <?php
-                            foreach ($sales as $values) :
-                            ?>
-                                <tr>
-                                    <td>
-                                    <td><?= $this->getCurrency(((int) $values['net_sales']) / FloatInt::DIVISOR); ?>
-                                    <td><?= \sprintf('%.2f', $values['net_sales'] == 0 ? 0 : $values['net_profit'] * 100 / $values['net_sales']); ?> %
-                            <?php endforeach; ?>
+                        <?php
+                        foreach ($sales as $values) :
+                        ?>
+                            <tr>
+                                <td>
+                                <td><?= $this->getCurrency(((int) $values['net_sales']) / FloatInt::DIVISOR, symbol: ''); ?>
+                                <td><?= \sprintf('%.2f', $values['net_sales'] == 0 ? 0 : $values['net_profit'] * 100 / $values['net_sales']); ?> %
+                        <?php endforeach; ?>
                     </table>
                     </div>
                 </div>
@@ -430,17 +430,19 @@ echo $this->data['nav']->render();
                     <?php foreach ($this->data['ytdAItemAttribute'] as $type => $values) : ?>
                         <tr>
                             <td><?= $this->printHtml($this->data['ytdPYItemAttribute'][$type]['value_l11n']); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
                             <td><?= $this->getCurrency(
                                 ((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                ((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                                ((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0)),
+                                symbol: ''
                             ); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
+                            <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
                             <td><?= $this->getCurrency(
                                 ((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                ((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                                ((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0)),
+                                symbol: ''
                             ); ?>
                     <?php endforeach; ?>
             </table>
@@ -468,20 +470,22 @@ echo $this->data['nav']->render();
                         <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
                 <tbody>
                     <?php foreach ($this->data['ytdAClientAttribute'] as $type => $values) : ?>
-                        <tr>
-                            <td><?= $this->printHtml($this->data['ytdPYClientAttribute'][$type]['value_l11n']); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['ytdPYClientAttribute'][$type]['net_sales'] ?? 0)); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['ytdAClientAttribute'][$type]['net_sales'] ?? 0)); ?>
-                            <td><?= $this->getCurrency(
-                                ((int) ($this->data['ytdAClientAttribute'][$type]['net_sales'] ?? 0)) -
-                                ((int) ($this->data['ytdPYClientAttribute'][$type]['net_sales'] ?? 0))
-                            ); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['mtdPYClientAttribute'][$type]['net_sales'] ?? 0)); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['mtdAClientAttribute'][$type]['net_sales'] ?? 0)); ?>
-                            <td><?= $this->getCurrency(
-                                ((int) ($this->data['mtdAClientAttribute'][$type]['net_sales'] ?? 0)) -
-                                ((int) ($this->data['mtdPYClientAttribute'][$type]['net_sales'] ?? 0))
-                            ); ?>
+                    <tr>
+                        <td><?= $this->printHtml($this->data['ytdPYClientAttribute'][$type]['value_l11n']); ?>
+                        <td><?= $this->getCurrency((int) ($this->data['ytdPYClientAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
+                        <td><?= $this->getCurrency((int) ($this->data['ytdAClientAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
+                        <td><?= $this->getCurrency(
+                            ((int) ($this->data['ytdAClientAttribute'][$type]['net_sales'] ?? 0)) -
+                            ((int) ($this->data['ytdPYClientAttribute'][$type]['net_sales'] ?? 0)),
+                            symbol: ''
+                        ); ?>
+                        <td><?= $this->getCurrency((int) ($this->data['mtdPYClientAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
+                        <td><?= $this->getCurrency((int) ($this->data['mtdAClientAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
+                        <td><?= $this->getCurrency(
+                            ((int) ($this->data['mtdAClientAttribute'][$type]['net_sales'] ?? 0)) -
+                            ((int) ($this->data['mtdPYClientAttribute'][$type]['net_sales'] ?? 0)),
+                            symbol: ''
+                        ); ?>
                     <?php endforeach; ?>
             </table>
             </div>
@@ -508,20 +512,22 @@ echo $this->data['nav']->render();
                         <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
                 <tbody>
                     <?php foreach ($this->data['ytdAClientCountry'] as $type => $values) : ?>
-                        <tr>
-                            <td><?= $this->printHtml(ISO3166NameEnum::getBy2Code($type)); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['ytdPYClientCountry'][$type]['net_sales'] ?? 0)); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['ytdAClientCountry'][$type]['net_sales'] ?? 0)); ?>
-                            <td><?= $this->getCurrency(
-                                ((int) ($this->data['ytdAClientCountry'][$type]['net_sales'] ?? 0)) -
-                                ((int) ($this->data['ytdPYClientCountry'][$type]['net_sales'] ?? 0))
-                            ); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['mtdPYClientCountry'][$type]['net_sales'] ?? 0)); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['mtdAClientCountry'][$type]['net_sales'] ?? 0)); ?>
-                            <td><?= $this->getCurrency(
-                                ((int) ($this->data['mtdAClientCountry'][$type]['net_sales'] ?? 0)) -
-                                ((int) ($this->data['mtdPYClientCountry'][$type]['net_sales'] ?? 0))
-                            ); ?>
+                    <tr>
+                        <td><?= $this->printHtml(ISO3166NameEnum::getBy2Code($type)); ?>
+                        <td><?= $this->getCurrency((int) ($this->data['ytdPYClientCountry'][$type]['net_sales'] ?? 0), symbol: ''); ?>
+                        <td><?= $this->getCurrency((int) ($this->data['ytdAClientCountry'][$type]['net_sales'] ?? 0), symbol: ''); ?>
+                        <td><?= $this->getCurrency(
+                            ((int) ($this->data['ytdAClientCountry'][$type]['net_sales'] ?? 0)) -
+                            ((int) ($this->data['ytdPYClientCountry'][$type]['net_sales'] ?? 0)),
+                            symbol: ''
+                        ); ?>
+                        <td><?= $this->getCurrency((int) ($this->data['mtdPYClientCountry'][$type]['net_sales'] ?? 0), symbol: ''); ?>
+                        <td><?= $this->getCurrency((int) ($this->data['mtdAClientCountry'][$type]['net_sales'] ?? 0), symbol: ''); ?>
+                        <td><?= $this->getCurrency(
+                            ((int) ($this->data['mtdAClientCountry'][$type]['net_sales'] ?? 0)) -
+                            ((int) ($this->data['mtdPYClientCountry'][$type]['net_sales'] ?? 0)),
+                            symbol: ''
+                        ); ?>
                     <?php endforeach; ?>
             </table>
             </div>

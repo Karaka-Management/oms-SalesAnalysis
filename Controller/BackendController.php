@@ -305,27 +305,31 @@ final class BackendController extends Controller
 
         ///
 
+        $regions = RegionEnum::getConstants();
+        unset($regions[\array_search('Export', $regions, true)]);
+        unset($regions[\array_search('Domestic', $regions, true)]);
+
         $view->data['ytdARegions'] = RegionMapper::countryToRegion(
             $view->data['ytdAClientCountry'],
-            RegionEnum::getConstants(),
+            $regions,
             ['net_sales', 'net_profit']
         );
 
         $view->data['ytdPYRegions'] = RegionMapper::countryToRegion(
             $view->data['ytdPYClientCountry'],
-            RegionEnum::getConstants(),
+            $regions,
             ['net_sales', 'net_profit']
         );
 
         $view->data['mtdARegions'] = RegionMapper::countryToRegion(
             $view->data['mtdAClientCountry'],
-            RegionEnum::getConstants(),
+            $regions,
             ['net_sales', 'net_profit']
         );
 
         $view->data['mtdPYRegions'] = RegionMapper::countryToRegion(
             $view->data['mtdPYClientCountry'],
-            RegionEnum::getConstants(),
+            $regions,
             ['net_sales', 'net_profit']
         );
 

@@ -50,15 +50,18 @@ class RegionMapper extends DataMapperFactory
                 address_country,
                 YEAR(billing_bill_performance_date) as salesyear,
                 MONTH(billing_bill_performance_date) as salesmonth,
-                SUM(billing_bill_netsales) as netsales,
-                SUM(billing_bill_netprofit) as netprofit
+                SUM(billing_bill_netsales * billing_type_transfer_sign) as netsales,
+                SUM(billing_bill_netprofit * billing_type_transfer_sign) as netprofit
             FROM billing_bill
+            LEFT JOIN billing_type
+                ON billing_bill_type = billing_type_id
             LEFT JOIN clientmgmt_client
                 ON clientmgmt_client_id = billing_bill_client
             LEFT JOIN address
                 ON clientmgmt_client_address = address_id
             WHERE
-                billing_bill_type = ' . BillTransferType::SALES . '
+                billing_type_transfer_type = ' . BillTransferType::SALES . '
+                AND billing_type_accounting = 1
                 AND billing_bill_performance_date >= \'' . $start->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $end->format('Y-m-d') . '\'
             GROUP BY
@@ -133,12 +136,15 @@ class RegionMapper extends DataMapperFactory
                 MONTH(billing_bill_performance_date) as salesmonth,
                 COUNT(billing_bill_netsales) as client_count
             FROM billing_bill
+            LEFT JOIN billing_type
+                ON billing_bill_type = billing_type_id
             LEFT JOIN clientmgmt_client
                 ON clientmgmt_client_id = billing_bill_client
             LEFT JOIN address
                 ON clientmgmt_client_address = address_id
             WHERE
-                billing_bill_type = ' . BillTransferType::SALES . '
+                billing_type_transfer_type = ' . BillTransferType::SALES . '
+                AND billing_type_accounting = 1
                 AND billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
@@ -214,12 +220,15 @@ class RegionMapper extends DataMapperFactory
                 MONTH(billing_bill_performance_date) as salesmonth,
                 COUNT(billing_bill_netsales) as client_count
             FROM billing_bill
+            LEFT JOIN billing_type
+                ON billing_bill_type = billing_type_id
             LEFT JOIN clientmgmt_client
                 ON clientmgmt_client_id = billing_bill_client
             LEFT JOIN address
                 ON clientmgmt_client_address = address_id
             WHERE
-                billing_bill_type = ' . BillTransferType::SALES . '
+                billing_type_transfer_type = ' . BillTransferType::SALES . '
+                AND billing_type_accounting = 1
                 AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
@@ -316,23 +325,30 @@ class RegionMapper extends DataMapperFactory
         $query->raw(
             'SELECT
                 address_country,
-                billing_bill_performance_date,
-                SUM(billing_bill_netsales) as netsales,
-                SUM(billing_bill_netprofit) as netprofit
+                YEAR(billing_bill_performance_date) as salesyear,
+                MONTH(billing_bill_performance_date) as salesmonth,
+                SUM(billing_bill_netsales * billing_type_transfer_sign) as netsales,
+                SUM(billing_bill_netprofit * billing_type_transfer_sign) as netprofit
             FROM billing_bill
+            LEFT JOIN billing_type
+                ON billing_bill_type = billing_type_id
             LEFT JOIN clientmgmt_client
                 ON clientmgmt_client_id = billing_bill_client
             LEFT JOIN address
                 ON clientmgmt_client_address = address_id
             WHERE
-                billing_bill_type = ' . BillTransferType::SALES . '
+                billing_type_transfer_type = ' . BillTransferType::SALES . '
+                AND billing_type_accounting = 1
                 AND billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $currentEnd->format('Y-m-d') . '\'
             GROUP BY
-                address_country, billing_bill_performance_date
+                address_country,
+                YEAR(billing_bill_performance_date),
+                MONTH(billing_bill_performance_date)
             ORDER BY
-                billing_bill_performance_date ASC,
-                address_country'
+                YEAR(billing_bill_performance_date) ASC,
+                MONTH(billing_bill_performance_date) ASC,
+                address_country ASC'
         );
 
         $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
@@ -341,15 +357,8 @@ class RegionMapper extends DataMapperFactory
         $period = 0;
 
         foreach ($results as $result) {
-            $date = new \DateTime($result['billing_bill_performance_date']);
-            if ($date->getTimestamp() <= $historyEnd->getTimestamp()) {
-                $period = 0;
-            } elseif ($date->getTimestamp() >= $currentStart->getTimestamp()) {
-                $period = 1;
-            } else {
-                continue;
-            }
-
+            // @todo Handle fiscal year
+            $period = $result['salesyear'] - ((int) $historyStart->format('Y')) + 1;
             if (!isset($sales[$result['address_country']])) {
                 for ($i = 1; $i < 11; ++$i) {
                     $sales[$result['address_country']][$i] = [
@@ -385,15 +394,18 @@ class RegionMapper extends DataMapperFactory
                 address_country,
                 YEAR(billing_bill_performance_date) as salesyear,
                 MONTH(billing_bill_performance_date) as salesmonth,
-                SUM(billing_bill_netsales) as netsales,
-                SUM(billing_bill_netprofit) as netprofit
+                SUM(billing_bill_netsales * billing_type_transfer_sign) as netsales,
+                SUM(billing_bill_netprofit * billing_type_transfer_sign) as netprofit
             FROM billing_bill
+            LEFT JOIN billing_type
+                ON billing_bill_type = billing_type_id
             LEFT JOIN clientmgmt_client
                 ON clientmgmt_client_id = billing_bill_client
             LEFT JOIN address
                 ON clientmgmt_client_address = address_id
             WHERE
-                billing_bill_type = ' . BillTransferType::SALES . '
+                billing_type_transfer_type = ' . BillTransferType::SALES . '
+                AND billing_type_accounting = 1
                 AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY

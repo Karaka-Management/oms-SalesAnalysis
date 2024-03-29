@@ -47,11 +47,14 @@ class GeneralMapper extends DataMapperFactory
             'SELECT
                 YEAR(billing_bill_performance_date) as salesyear,
                 MONTH(billing_bill_performance_date) as salesmonth,
-                SUM(billing_bill_netsales) as netsales,
-                SUM(billing_bill_netprofit) as netprofit
+                SUM(billing_bill_netsales * billing_type_transfer_sign) as netsales,
+                SUM(billing_bill_netprofit * billing_type_transfer_sign) as netprofit
             FROM billing_bill
+            LEFT JOIN billing_type
+                ON billing_bill_type = billing_type_id
             WHERE
-                billing_bill_type = ' . BillTransferType::SALES . '
+                billing_type_transfer_type = ' . BillTransferType::SALES . '
+                AND billing_type_accounting = 1
                 AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
@@ -59,7 +62,7 @@ class GeneralMapper extends DataMapperFactory
                 MONTH(billing_bill_performance_date)
             ORDER BY
                 YEAR(billing_bill_performance_date) ASC,
-                MONTH(billing_bill_performance_date) ASC'
+                MONTH(billing_bill_performance_date) ASC;'
         );
 
         $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
@@ -140,11 +143,14 @@ class GeneralMapper extends DataMapperFactory
             'SELECT
                 YEAR(billing_bill_performance_date) as salesyear,
                 MONTH(billing_bill_performance_date) as salesmonth,
-                SUM(billing_bill_netsales) as netsales,
-                SUM(billing_bill_netprofit) as netprofit
+                SUM(billing_bill_netsales * billing_type_transfer_sign) as netsales,
+                SUM(billing_bill_netprofit * billing_type_transfer_sign) as netprofit
             FROM billing_bill
+            LEFT JOIN billing_type
+                ON billing_bill_type = billing_type_id
             WHERE
-                billing_bill_type = ' . BillTransferType::SALES . '
+                billing_type_transfer_type = ' . BillTransferType::SALES . '
+                AND billing_type_accounting = 1
                 AND billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY

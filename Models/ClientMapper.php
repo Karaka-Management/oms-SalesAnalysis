@@ -53,9 +53,11 @@ class ClientMapper extends DataMapperFactory
                 clientmgmt_attr_value_l11n_title,
                 YEAR(billing_bill_performance_date) as salesyear,
                 MONTH(billing_bill_performance_date) as salesmonth,
-                SUM(billing_bill_netsales) as netsales,
-                SUM(billing_bill_netprofit) as netprofit
+                SUM(billing_bill_netsales * billing_type_transfer_sign) as netsales,
+                SUM(billing_bill_netprofit * billing_type_transfer_sign) as netprofit
             FROM billing_bill
+            LEFT JOIN billing_type
+                ON billing_bill_type = billing_type_id
             LEFT JOIN clientmgmt_client
                 ON clientmgmt_client_id = billing_bill_client
             LEFT JOIN clientmgmt_client_attr
@@ -69,7 +71,8 @@ class ClientMapper extends DataMapperFactory
             LEFT JOIN clientmgmt_attr_value_l11n
                 ON clientmgmt_attr_value_id = clientmgmt_attr_value_l11n_value AND clientmgmt_attr_value_l11n_lang = \'' . $language . '\'
             WHERE
-                billing_bill_type = ' . BillTransferType::SALES . '
+                billing_type_transfer_type = ' . BillTransferType::SALES . '
+                AND billing_type_accounting = 1
                 AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
                 AND clientmgmt_attr_type_name IN (\'segment\', \'section\', \'client_group\', \'client_type\')
