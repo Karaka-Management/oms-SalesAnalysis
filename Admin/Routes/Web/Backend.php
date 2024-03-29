@@ -6,7 +6,7 @@ use phpOMS\Account\PermissionType;
 use phpOMS\Router\RouteVerb;
 
 return [
-    '^.*/sales/analysis(\?.*$|$)' => [
+    '^/sales/analysis(\?.*$|$)' => [
         [
             'dest'       => '\Modules\SalesAnalysis\Controller\BackendController:viewDashboard',
             'verb'       => RouteVerb::GET,
@@ -18,7 +18,7 @@ return [
         ],
     ],
 
-    '^.*/sales/analysis/bill(\?.*$|$)' => [
+    '^/sales/analysis/bill(\?.*$|$)' => [
         [
             'dest'       => '\Modules\SalesAnalysis\Controller\BackendController:viewBillAnalysis',
             'verb'       => RouteVerb::GET,
@@ -29,7 +29,7 @@ return [
             ],
         ],
     ],
-    '^.*/sales/analysis/rep(\?.*$|$)' => [
+    '^/sales/analysis/rep(\?.*$|$)' => [
         [
             'dest'       => '\Modules\SalesAnalysis\Controller\BackendController:viewSalesRepAnalysis',
             'verb'       => RouteVerb::GET,
@@ -40,7 +40,7 @@ return [
             ],
         ],
     ],
-    '^.*/sales/analysis/region(\?.*$|$)' => [
+    '^/sales/analysis/region(\?.*$|$)' => [
         [
             'dest'       => '\Modules\SalesAnalysis\Controller\BackendController:viewRegionAnalysis',
             'verb'       => RouteVerb::GET,
@@ -51,7 +51,7 @@ return [
             ],
         ],
     ],
-    '^.*/sales/analysis/client(\?.*$|$)' => [
+    '^/sales/analysis/client(\?.*$|$)' => [
         [
             'dest'       => '\Modules\SalesAnalysis\Controller\BackendController:viewClientAnalysis',
             'verb'       => RouteVerb::GET,
@@ -62,7 +62,7 @@ return [
             ],
         ],
     ],
-    '^.*/sales/analysis/item(\?.*$|$)' => [
+    '^/sales/analysis/item(\?.*$|$)' => [
         [
             'dest'       => '\Modules\SalesAnalysis\Controller\BackendController:viewItemSalesAnalysis',
             'verb'       => RouteVerb::GET,
