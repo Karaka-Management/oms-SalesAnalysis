@@ -502,7 +502,7 @@ class RegionMapper extends DataMapperFactory
             $tempStruct[$column] = 0;
         }
 
-        $regions = ['Other' => $tempStruct];
+        $regions     = ['Other' => $tempStruct];
         $definitions = [];
 
         foreach ($region as $r) {
