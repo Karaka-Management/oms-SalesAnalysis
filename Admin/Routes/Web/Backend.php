@@ -10,6 +10,7 @@ return [
         [
             'dest'       => '\Modules\SalesAnalysis\Controller\BackendController:viewDashboard',
             'verb'       => RouteVerb::GET,
+            'active' => true,
             'permission' => [
                 'module' => BackendController::NAME,
                 'type'   => PermissionType::CREATE,
@@ -22,6 +23,7 @@ return [
         [
             'dest'       => '\Modules\SalesAnalysis\Controller\BackendController:viewBillAnalysis',
             'verb'       => RouteVerb::GET,
+            'active' => true,
             'permission' => [
                 'module' => BackendController::NAME,
                 'type'   => PermissionType::READ,
@@ -33,6 +35,7 @@ return [
         [
             'dest'       => '\Modules\SalesAnalysis\Controller\BackendController:viewSalesRepAnalysis',
             'verb'       => RouteVerb::GET,
+            'active' => true,
             'permission' => [
                 'module' => BackendController::NAME,
                 'type'   => PermissionType::READ,
@@ -44,6 +47,7 @@ return [
         [
             'dest'       => '\Modules\SalesAnalysis\Controller\BackendController:viewRegionAnalysis',
             'verb'       => RouteVerb::GET,
+            'active' => true,
             'permission' => [
                 'module' => BackendController::NAME,
                 'type'   => PermissionType::READ,
@@ -55,6 +59,7 @@ return [
         [
             'dest'       => '\Modules\SalesAnalysis\Controller\BackendController:viewClientAnalysis',
             'verb'       => RouteVerb::GET,
+            'active' => true,
             'permission' => [
                 'module' => BackendController::NAME,
                 'type'   => PermissionType::READ,
@@ -66,6 +71,7 @@ return [
         [
             'dest'       => '\Modules\SalesAnalysis\Controller\BackendController:viewItemSalesAnalysis',
             'verb'       => RouteVerb::GET,
+            'active' => true,
             'permission' => [
                 'module' => BackendController::NAME,
                 'type'   => PermissionType::READ,
