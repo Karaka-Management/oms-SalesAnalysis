@@ -3,6 +3,7 @@ import { Autoloader } from '../../../jsOMS/Autoloader.js';
 
 Autoloader.defineNamespace('omsApp.Modules');
 
+/* global omsApp ChartGeo Chart */
 omsApp.Modules.SalesAnalysis = class {
     /**
      * @constructor
@@ -16,8 +17,11 @@ omsApp.Modules.SalesAnalysis = class {
 
     bind (id)
     {
-        const charts = typeof id === 'undefined' ? document.getElementsByTagName('canvas') : [document.getElementById(id)];
-        let length   = charts.length;
+        const charts = typeof id === 'undefined'
+            ? document.getElementsByTagName('canvas')
+            : [document.getElementById(id)];
+
+        const length = charts.length;
 
         for (let i = 0; i < length; ++i) {
             if (charts[i].getAttribute('data-chart') === null
@@ -38,7 +42,6 @@ omsApp.Modules.SalesAnalysis = class {
             return;
         }
 
-        const self = this;
         const data = JSON.parse(chart.getAttribute('data-chart'));
 
         if (data.type === 'choropleth') {
@@ -58,15 +61,16 @@ omsApp.Modules.SalesAnalysis = class {
                 }
 
                 data.data.datasets[0].data = countries.map((c) => (
-                    {feature: c, value: (vals.hasOwnProperty(c.id) ? vals[c.id] : null)}
+                    { feature: c, value: Object.prototype.hasOwnProperty.call(vals, c.id) ? vals[c.id] : null }
                 ));
 
+                // eslint-disable-next-line no-unused-vars
                 const myChart = new Chart(chart.getContext('2d'), data);
             });
         } else {
+            // eslint-disable-next-line no-unused-vars
             const myChart = new Chart(chart.getContext('2d'), data);
         }
-
     };
 };
 
