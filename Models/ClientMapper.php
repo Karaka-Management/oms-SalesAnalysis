@@ -53,8 +53,8 @@ class ClientMapper extends DataMapperFactory
                 clientmgmt_attr_value_l11n_title,
                 YEAR(billing_bill_performance_date) as salesyear,
                 MONTH(billing_bill_performance_date) as salesmonth,
-                SUM(billing_bill_netsales * billing_type_transfer_sign) as netsales,
-                SUM(billing_bill_netprofit * billing_type_transfer_sign) as netprofit
+                SUM(billing_bill_netsales * billing_type_sign) as netsales,
+                SUM(billing_bill_netprofit * billing_type_sign) as netprofit
             FROM billing_bill
             LEFT JOIN billing_type
                 ON billing_bill_type = billing_type_id

@@ -68,4 +68,6 @@ return ['SalesAnalysis' => [
     'America'         => 'America',
     'Oceania'         => 'Oceania',
     'Africa'          => 'Africa',
+    'SalesRep'          => 'SalesRep',
+    'SalesReps'          => 'SalesReps',
 ]];

@@ -19,6 +19,7 @@ use Modules\SalesAnalysis\Models\ClientMapper;
 use Modules\SalesAnalysis\Models\GeneralMapper;
 use Modules\SalesAnalysis\Models\ItemMapper;
 use Modules\SalesAnalysis\Models\RegionMapper;
+use Modules\SalesAnalysis\Models\SalesRepMapper;
 use phpOMS\Asset\AssetType;
 use phpOMS\Contract\RenderableInterface;
 use phpOMS\Localization\ISO3166CharEnum;
@@ -37,6 +38,12 @@ use phpOMS\Views\View;
  * @license OMS License 1.0
  * @link    https://jingga.app
  * @since   1.0.0
+ *
+ * @feature Create a map of sales (maybe as data points or as heat maps)
+ *      https://github.com/Karaka-Management/oms-ClientManagement/issues/14
+ *
+ * @feature Create a map of all customers (maybe as data points or as heat maps)
+ *      https://github.com/Karaka-Management/oms-ClientManagement/issues/15
  */
 final class BackendController extends Controller
 {
@@ -348,7 +355,7 @@ final class BackendController extends Controller
      * @since 1.0.0
      * @codeCoverageIgnore
      */
-    public function viewBillAnalysis(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
+    public function viewSalesRepAnalysis(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
     {
         $head  = $response->data['Content']->head;
         $nonce = $this->app->appSettings->getOption('script-nonce');
@@ -358,8 +365,78 @@ final class BackendController extends Controller
         $head->addAsset(AssetType::JSLATE, 'Modules/SalesAnalysis/Controller/Controller.js?v=' . self::VERSION, ['nonce' => $nonce, 'type' => 'module']);
 
         $view = new View($this->app->l11nManager, $request, $response);
-        $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-bill');
+        $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-rep');
         $view->data['nav'] = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
+
+        $businessStart   = 1;
+        $startOfYear     = SmartDateTime::createFromDateTime(SmartDateTime::startOfYear($businessStart));
+        $startCurrent    = $request->getDataDateTime('startcurrent') ?? clone $startOfYear;
+        $endCurrent      = $request->getDataDateTime('endcurrent') ?? SmartDateTime::endOfMonth();
+        $endCurrentIndex = SmartDateTime::calculateMonthIndex((int) $endCurrent->format('m'), $businessStart);
+        $startComparison = $request->getDataDateTime('startcomparison') ?? SmartDateTime::createFromDateTime($startCurrent)->createModify(-1);
+        $endComparison   = $request->getDataDateTime('endcomparison') ?? SmartDateTime::createFromDateTime(SmartDateTime::endOfYear($businessStart))->smartModify(-1);
+        $historyStart    = $startOfYear->createModify(-9);
+
+        $view->data['startCurrent']    = $startCurrent;
+        $view->data['endCurrent']      = $endCurrent;
+        $view->data['startComparison'] = $startComparison;
+        $view->data['endComparison']   = $endComparison;
+        $view->data['historyStart']    = $historyStart;
+
+        $domestic = UnitMapper::get()
+            ->with('mainAddress')
+            ->where('id', $this->app->unitId)
+            ->execute();
+
+        [
+            $mtdCurrent,
+            $ytdCurrent,
+            $monthlyCurrent
+        ] = SalesRepMapper::monthlySalesProfit(
+            $startCurrent,
+            $endCurrent,
+            $businessStart
+        );
+
+        [
+            $mtdPY,
+            $ytdPY,
+            $monthlyPY
+        ] = SalesRepMapper::monthlySalesProfit(
+            $startComparison,
+            $endComparison,
+            $businessStart
+        );
+
+        [
+            $view->data['mtdPYClientRep'],
+            $view->data['mtdAClientRep'],
+            $view->data['ytdPYClientRep'],
+            $view->data['ytdAClientRep'],
+        ] = SalesRepMapper::mtdYtdRep(
+            $startCurrent,
+            $endCurrent,
+            $startComparison,
+            $endComparison,
+            $businessStart
+        );
+
+        $annualRepSales = SalesRepMapper::salesProfitRep($historyStart, $startCurrent, $startCurrent, $endCurrent);
+
+        [
+            $view->data['mtdPYClientRepCount'],
+            $view->data['mtdAClientRepCount'],
+            $view->data['ytdPYClientRepCount'],
+            $view->data['ytdAClientRepCount'],
+        ] = SalesRepMapper::mtdYtdClientRep(
+            $startCurrent,
+            $endCurrent,
+            $startComparison,
+            $endComparison,
+            $businessStart
+        );
+
+        $annualRepCount = SalesRepMapper::annualCustomerRep(clone $historyStart, $endCurrent);
 
         return $view;
     }
@@ -376,7 +453,7 @@ final class BackendController extends Controller
      * @since 1.0.0
      * @codeCoverageIgnore
      */
-    public function viewSalesRepAnalysis(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
+    public function viewBillAnalysis(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
     {
         $head  = $response->data['Content']->head;
         $nonce = $this->app->appSettings->getOption('script-nonce');
@@ -386,64 +463,8 @@ final class BackendController extends Controller
         $head->addAsset(AssetType::JSLATE, 'Modules/SalesAnalysis/Controller/Controller.js?v=' . self::VERSION, ['nonce' => $nonce, 'type' => 'module']);
 
         $view = new View($this->app->l11nManager, $request, $response);
-        $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-rep');
+        $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-bill');
         $view->data['nav'] = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
-
-        /////
-        $currentCustomerRegion = [
-            'Europe'  => (int) (\mt_rand(200, 400) / 4),
-            'America' => (int) (\mt_rand(200, 400) / 4),
-            'Asia'    => (int) (\mt_rand(200, 400) / 4),
-            'Africa'  => (int) (\mt_rand(200, 400) / 4),
-            'CIS'     => (int) (\mt_rand(200, 400) / 4),
-            'Other'   => (int) (\mt_rand(200, 400) / 4),
-        ];
-
-        $view->data['currentCustomerRegion'] = $currentCustomerRegion;
-
-        $annualCustomerRegion = [];
-        for ($i = 1; $i < 11; ++$i) {
-            $annualCustomerRegion[] = [
-                'year'    => 2020 - 10 + $i,
-                'Europe'  => $a = (int) (\mt_rand(200, 400) / 4),
-                'America' => $b = (int) (\mt_rand(200, 400) / 4),
-                'Asia'    => $c = (int) (\mt_rand(200, 400) / 4),
-                'Africa'  => $d = (int) (\mt_rand(200, 400) / 4),
-                'CIS'     => $e = (int) (\mt_rand(200, 400) / 4),
-                'Other'   => $f = (int) (\mt_rand(200, 400) / 4),
-                'Total'   => $a + $b + $c + $d + $e + $f,
-            ];
-        }
-
-        $view->data['annualCustomerRegion'] = $annualCustomerRegion;
-
-         /////
-        $currentCustomersRep = [];
-        for ($i = 1; $i < 13; ++$i) {
-            $currentCustomersRep['Rep ' . $i] = [
-                'customers' => (int) (\mt_rand(200, 400) / 12),
-            ];
-        }
-
-        \uasort($currentCustomersRep, function($a, $b) {
-            return $b['customers'] <=> $a['customers'];
-        });
-
-        $view->data['currentCustomersRep'] = $currentCustomersRep;
-
-        $annualCustomersRep = [];
-        for ($i = 1; $i < 13; ++$i) {
-            $annualCustomersRep['Rep ' . $i] = [];
-
-            for ($j = 1; $j < 11; ++$j) {
-                $annualCustomersRep['Rep ' . $i][] = [
-                    'customers' => (int) (\mt_rand(200, 400) / 12),
-                    'year'      => 2020 - 10 + $j,
-                ];
-            }
-        }
-
-        $view->data['annualCustomersRep'] = $annualCustomersRep;
 
         return $view;
     }

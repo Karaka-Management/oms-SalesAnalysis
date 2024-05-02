@@ -17,7 +17,6 @@ namespace Modules\SalesAnalysis\Models;
 use Modules\Billing\Models\BillTransferType;
 use phpOMS\DataStorage\Database\Mapper\DataMapperFactory;
 use phpOMS\DataStorage\Database\Query\Builder;
-use phpOMS\Localization\ISO3166TwoEnum;
 use phpOMS\Stdlib\Base\SmartDateTime;
 
 /**
@@ -27,11 +26,8 @@ use phpOMS\Stdlib\Base\SmartDateTime;
  * @license OMS License 1.0
  * @link    https://jingga.app
  * @since   1.0.0
- *
- * @todo the periods are wrong if they are disjunct (e.g. A vs PPY)
- * solution: functions need a clear start-end time and then called twice for A vs PY comparison
  */
-class RegionMapper extends DataMapperFactory
+class SalesRepMapper extends DataMapperFactory
 {
     /**
      * @todo Re-implement, still in use?
@@ -47,7 +43,7 @@ class RegionMapper extends DataMapperFactory
         $query = new Builder(self::$db);
         $query->raw(
             'SELECT
-                address_country,
+                billing_bill_rep,
                 YEAR(billing_bill_performance_date) as salesyear,
                 MONTH(billing_bill_performance_date) as salesmonth,
                 SUM(billing_bill_netsales * billing_type_sign) as netsales,
@@ -65,13 +61,13 @@ class RegionMapper extends DataMapperFactory
                 AND billing_bill_performance_date >= \'' . $start->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $end->format('Y-m-d') . '\'
             GROUP BY
-                address_country,
+                billing_bill_rep,
                 YEAR(billing_bill_performance_date),
                 MONTH(billing_bill_performance_date)
             ORDER BY
                 YEAR(billing_bill_performance_date) ASC,
                 MONTH(billing_bill_performance_date) ASC,
-                address_country'
+                billing_bill_rep'
         );
 
         $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
@@ -84,17 +80,17 @@ class RegionMapper extends DataMapperFactory
         foreach ($results as $result) {
             $monthIndex = SmartDateTime::calculateMonthIndex((int) $result['salesmonth'], $businessStart);
 
-            if (!isset($monthlySales[$result['address_country']])) {
-                $monthlySales[$result['address_country']] = [];
+            if (!isset($monthlySales[$result['billing_bill_rep']])) {
+                $monthlySales[$result['billing_bill_rep']] = [];
 
-                $mtdA[$result['address_country']]  = ['net_sales' => 0, 'net_profit' => 0];
-                $mtdPY[$result['address_country']] = ['net_sales' => 0, 'net_profit' => 0];
+                $mtdA[$result['billing_bill_rep']]  = ['net_sales' => 0, 'net_profit' => 0];
+                $mtdPY[$result['billing_bill_rep']] = ['net_sales' => 0, 'net_profit' => 0];
 
-                $ytdA[$result['address_country']]  = ['net_sales' => 0, 'net_profit' => 0];
-                $ytdPY[$result['address_country']] = ['net_sales' => 0, 'net_profit' => 0];
+                $ytdA[$result['billing_bill_rep']]  = ['net_sales' => 0, 'net_profit' => 0];
+                $ytdPY[$result['billing_bill_rep']] = ['net_sales' => 0, 'net_profit' => 0];
 
                 for ($i = 1; $i < 3; ++$i) {
-                    $monthlySales[$result['address_country']][$i] = \array_fill(1, 12, [
+                    $monthlySales[$result['billing_bill_rep']][$i] = \array_fill(1, 12, [
                         'net_sales'  => null,
                         'net_profit' => null,
                     ]);
@@ -102,18 +98,18 @@ class RegionMapper extends DataMapperFactory
             }
 
             // indexed according to the fiscal year
-            $monthlySales[$result['address_country']][$monthIndex] = [
+            $monthlySales[$result['billing_bill_rep']][$monthIndex] = [
                 'net_sales'  => (int) $result['netsales'],
                 'net_profit' => (int) $result['netprofit'],
             ];
 
             if ($monthIndex === $endCurrentIndex) {
-                $mtd[$result['address_country']] = $monthlySales[$result['address_country']][$monthIndex];
+                $mtd[$result['billing_bill_rep']] = $monthlySales[$result['billing_bill_rep']][$monthIndex];
             }
 
             if ($monthIndex <= $endCurrentIndex) {
-                $ytd[$result['address_country']]['net_sales']  += $monthlySales[$result['address_country']][$monthIndex]['net_sales'];
-                $ytd[$result['address_country']]['net_profit'] += $monthlySales[$result['address_country']][$monthIndex]['net_profit'];
+                $ytd[$result['billing_bill_rep']]['net_sales']  += $monthlySales[$result['billing_bill_rep']][$monthIndex]['net_sales'];
+                $ytd[$result['billing_bill_rep']]['net_profit'] += $monthlySales[$result['billing_bill_rep']][$monthIndex]['net_profit'];
             }
         }
 
@@ -123,7 +119,7 @@ class RegionMapper extends DataMapperFactory
     /**
      * @todo Re-implement, still in use?
      */
-    public static function annualCustomerCountry(
+    public static function annualCustomerRep(
         SmartDateTime $historyStart,
         \DateTime $endCurrent,
         int $businessStart = 1
@@ -131,7 +127,7 @@ class RegionMapper extends DataMapperFactory
         $query = new Builder(self::$db);
         $query->raw(
             'SELECT
-                address_country,
+                billing_bill_rep,
                 YEAR(billing_bill_performance_date) as salesyear,
                 MONTH(billing_bill_performance_date) as salesmonth,
                 COUNT(billing_bill_netsales) as client_count
@@ -148,13 +144,13 @@ class RegionMapper extends DataMapperFactory
                 AND billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
-                address_country,
+                billing_bill_rep,
                 YEAR(billing_bill_performance_date),
                 MONTH(billing_bill_performance_date)
             ORDER BY
                 YEAR(billing_bill_performance_date) ASC,
                 MONTH(billing_bill_performance_date) ASC,
-                address_country'
+                billing_bill_rep'
         );
 
         $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
@@ -180,9 +176,9 @@ class RegionMapper extends DataMapperFactory
 
             $oldIndex = $monthIndex;
 
-            if (!isset($annualCustomer[$result['address_country']])) {
+            if (!isset($annualCustomer[$result['billing_bill_rep']])) {
                 for ($i = 1; $i < 11; ++$i) {
-                    $annualCustomer[$result['address_country']][$i] = [
+                    $annualCustomer[$result['billing_bill_rep']][$i] = [
                         'client_count' => 0,
                     ];
 
@@ -193,7 +189,7 @@ class RegionMapper extends DataMapperFactory
             }
 
             // indexed according to the fiscal year
-            $annualCustomer[$result['address_country']][$period]['client_count'] += (int) $result['client_count'];
+            $annualCustomer[$result['billing_bill_rep']][$period]['client_count'] += (int) $result['client_count'];
         }
 
         return $annualCustomer;
@@ -202,7 +198,7 @@ class RegionMapper extends DataMapperFactory
     /**
      * @todo Re-implement, still in use?
      */
-    public static function mtdYtdClientCountry(
+    public static function mtdYtdClientRep(
         \DateTime $startCurrent,
         \DateTime $endCurrent,
         \DateTime $startComparison,
@@ -215,7 +211,7 @@ class RegionMapper extends DataMapperFactory
         $query = new Builder(self::$db);
         $query->raw(
             'SELECT
-                address_country,
+                billing_bill_rep,
                 YEAR(billing_bill_performance_date) as salesyear,
                 MONTH(billing_bill_performance_date) as salesmonth,
                 COUNT(billing_bill_netsales) as client_count
@@ -232,13 +228,13 @@ class RegionMapper extends DataMapperFactory
                 AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
-                address_country,
+                billing_bill_rep,
                 YEAR(billing_bill_performance_date),
                 MONTH(billing_bill_performance_date)
             ORDER BY
                 YEAR(billing_bill_performance_date) ASC,
                 MONTH(billing_bill_performance_date) ASC,
-                address_country ASC'
+                billing_bill_rep ASC'
         );
 
         $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
@@ -277,27 +273,27 @@ class RegionMapper extends DataMapperFactory
 
             if ($monthIndex === $endCurrentIndex) {
                 if ($period === 1) {
-                    $mtdPYClientCountry[$result['address_country']] = $temp;
+                    $mtdPYClientCountry[$result['billing_bill_rep']] = $temp;
                 } else {
-                    $mtdAClientCountry[$result['address_country']] = $temp;
+                    $mtdAClientCountry[$result['billing_bill_rep']] = $temp;
                 }
             }
 
             if ($monthIndex <= $endCurrentIndex) {
-                if (!isset($ytdPYClientCountry[$result['address_country']])) {
-                    $ytdPYClientCountry[$result['address_country']] = [
+                if (!isset($ytdPYClientCountry[$result['billing_bill_rep']])) {
+                    $ytdPYClientCountry[$result['billing_bill_rep']] = [
                         'client_count' => 0,
                     ];
 
-                    $ytdAClientCountry[$result['address_country']] = [
+                    $ytdAClientCountry[$result['billing_bill_rep']] = [
                         'client_count' => 0,
                     ];
                 }
 
                 if ($period === 1) {
-                    $ytdPYClientCountry[$result['address_country']]['client_count'] += $temp['client_count'];
+                    $ytdPYClientCountry[$result['billing_bill_rep']]['client_count'] += $temp['client_count'];
                 } else {
-                    $ytdAClientCountry[$result['address_country']]['client_count'] += $temp['client_count'];
+                    $ytdAClientCountry[$result['billing_bill_rep']]['client_count'] += $temp['client_count'];
                 }
             }
         }
@@ -315,7 +311,7 @@ class RegionMapper extends DataMapperFactory
     /**
      * @todo Re-implement, still in use?
      */
-    public static function salesProfitCountry(
+    public static function salesProfitRep(
         \DateTime $historyStart,
         \DateTime $historyEnd,
         \DateTime $currentStart,
@@ -324,7 +320,7 @@ class RegionMapper extends DataMapperFactory
         $query = new Builder(self::$db);
         $query->raw(
             'SELECT
-                address_country,
+                billing_bill_rep,
                 YEAR(billing_bill_performance_date) as salesyear,
                 MONTH(billing_bill_performance_date) as salesmonth,
                 SUM(billing_bill_netsales * billing_type_sign) as netsales,
@@ -342,13 +338,13 @@ class RegionMapper extends DataMapperFactory
                 AND billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $currentEnd->format('Y-m-d') . '\'
             GROUP BY
-                address_country,
+                billing_bill_rep,
                 YEAR(billing_bill_performance_date),
                 MONTH(billing_bill_performance_date)
             ORDER BY
                 YEAR(billing_bill_performance_date) ASC,
                 MONTH(billing_bill_performance_date) ASC,
-                address_country ASC'
+                billing_bill_rep ASC'
         );
 
         $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
@@ -359,9 +355,9 @@ class RegionMapper extends DataMapperFactory
         foreach ($results as $result) {
             // @todo Handle fiscal year
             $period = $result['salesyear'] - ((int) $historyStart->format('Y')) + 1;
-            if (!isset($sales[$result['address_country']])) {
+            if (!isset($sales[$result['billing_bill_rep']])) {
                 for ($i = 1; $i < 11; ++$i) {
-                    $sales[$result['address_country']][$i] = [
+                    $sales[$result['billing_bill_rep']][$i] = [
                         'net_sales'  => 0,
                         'net_profit' => 0,
                         'year'       => $period === 0 ? 'PY' : 'A',
@@ -369,8 +365,8 @@ class RegionMapper extends DataMapperFactory
                 }
             }
 
-            $sales[$result['address_country']][$period]['net_sales']  += (int) $result['netsales'];
-            $sales[$result['address_country']][$period]['net_profit'] += (int) $result['netprofit'];
+            $sales[$result['billing_bill_rep']][$period]['net_sales']  += (int) $result['netsales'];
+            $sales[$result['billing_bill_rep']][$period]['net_profit'] += (int) $result['netprofit'];
         }
 
         return $sales;
@@ -379,7 +375,7 @@ class RegionMapper extends DataMapperFactory
     /**
      * @todo Re-implement, still in use?
      */
-    public static function mtdYtdCountry(
+    public static function mtdYtdRep(
         \DateTime $startCurrent,
         \DateTime $endCurrent,
         \DateTime $startComparison,
@@ -391,7 +387,7 @@ class RegionMapper extends DataMapperFactory
         $query = new Builder(self::$db);
         $query->raw(
             'SELECT
-                address_country,
+                billing_bill_rep,
                 YEAR(billing_bill_performance_date) as salesyear,
                 MONTH(billing_bill_performance_date) as salesmonth,
                 SUM(billing_bill_netsales * billing_type_sign) as netsales,
@@ -409,13 +405,13 @@ class RegionMapper extends DataMapperFactory
                 AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
-                address_country,
+                billing_bill_rep,
                 YEAR(billing_bill_performance_date),
                 MONTH(billing_bill_performance_date)
             ORDER BY
                 YEAR(billing_bill_performance_date) ASC,
                 MONTH(billing_bill_performance_date) ASC,
-                address_country ASC'
+                billing_bill_rep ASC'
         );
 
         $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
@@ -455,31 +451,31 @@ class RegionMapper extends DataMapperFactory
 
             if ($monthIndex === $endCurrentIndex) {
                 if ($period === 1) {
-                    $mtdPYClientCountry[$result['address_country']] = $temp;
+                    $mtdPYClientCountry[$result['billing_bill_rep']] = $temp;
                 } else {
-                    $mtdAClientCountry[$result['address_country']] = $temp;
+                    $mtdAClientCountry[$result['billing_bill_rep']] = $temp;
                 }
             }
 
             if ($monthIndex <= $endCurrentIndex) {
-                if (!isset($ytdPYClientCountry[$result['address_country']])) {
-                    $ytdPYClientCountry[$result['address_country']] = [
+                if (!isset($ytdPYClientCountry[$result['billing_bill_rep']])) {
+                    $ytdPYClientCountry[$result['billing_bill_rep']] = [
                         'net_sales'  => 0,
                         'net_profit' => 0,
                     ];
 
-                    $ytdAClientCountry[$result['address_country']] = [
+                    $ytdAClientCountry[$result['billing_bill_rep']] = [
                         'net_sales'  => 0,
                         'net_profit' => 0,
                     ];
                 }
 
                 if ($period === 1) {
-                    $ytdPYClientCountry[$result['address_country']]['net_sales']  += $temp['net_sales'];
-                    $ytdPYClientCountry[$result['address_country']]['net_profit'] += $temp['net_profit'];
+                    $ytdPYClientCountry[$result['billing_bill_rep']]['net_sales']  += $temp['net_sales'];
+                    $ytdPYClientCountry[$result['billing_bill_rep']]['net_profit'] += $temp['net_profit'];
                 } else {
-                    $ytdAClientCountry[$result['address_country']]['net_sales']  += $temp['net_sales'];
-                    $ytdAClientCountry[$result['address_country']]['net_profit'] += $temp['net_profit'];
+                    $ytdAClientCountry[$result['billing_bill_rep']]['net_sales']  += $temp['net_sales'];
+                    $ytdAClientCountry[$result['billing_bill_rep']]['net_profit'] += $temp['net_profit'];
                 }
             }
         }
@@ -490,98 +486,5 @@ class RegionMapper extends DataMapperFactory
             $ytdPYClientCountry,
             $ytdAClientCountry,
         ];
-    }
-
-    /**
-     * @todo Re-implement, still in use?
-     */
-    public static function countryToRegion(array $countries, array $region, array $columns) : array
-    {
-        $tempStruct = [];
-        foreach ($columns as $column) {
-            $tempStruct[$column] = 0;
-        }
-
-        $regions     = ['Other' => $tempStruct];
-        $definitions = [];
-
-        foreach ($region as $r) {
-            $definitions[$r] = ($temp = ISO3166TwoEnum::getRegion($r)) === [] ? [$r] : $temp;
-            $regions[$r]     = $tempStruct;
-        }
-
-        foreach ($countries as $country => $data) {
-            $found = false;
-            foreach ($definitions as $r => $c) {
-                if (\in_array($country, $c)) {
-                    foreach ($columns as $column) {
-                        $regions[$r][$column] += $data[$column];
-                    }
-
-                    $found = true;
-                }
-            }
-
-            if (!$found) {
-                foreach ($columns as $column) {
-                    $regions['Other'][$column] += $data[$column];
-                }
-            }
-        }
-
-        return $regions;
-    }
-
-    /**
-     * @todo Re-implement, still in use?
-     */
-    public static function countryIntervalToRegion(array $countries, array $region, array $columns) : array
-    {
-        if (empty($countries)) {
-            return [];
-        }
-
-        $count = \count(\reset($countries));
-
-        $tempStruct = [];
-        foreach ($columns as $column) {
-            $tempStruct[$column] = 0;
-        }
-
-        $regions = [
-            'Other' => \array_fill(1, $count, $tempStruct),
-        ];
-
-        $definitions = [];
-
-        foreach ($region as $r) {
-            $definitions[$r] = ($temp = ISO3166TwoEnum::getRegion($r)) === [] ? [$r] : $temp;
-            $regions[$r]     = \array_fill(1, $count, $tempStruct);
-        }
-
-        foreach ($countries as $country => $data) {
-            $found = false;
-            foreach ($definitions as $r => $c) {
-                if (\in_array($country, $c)) {
-                    foreach ($data as $idx => $value) {
-                        foreach ($columns as $column) {
-                            $regions[$r][$idx][$column] += $value[$column];
-                        }
-                    }
-
-                    $found = true;
-                }
-            }
-
-            if (!$found) {
-                foreach ($data as $idx => $value) {
-                    foreach ($columns as $column) {
-                        $regions['Other'][$idx][$column] += $value[$column];
-                    }
-                }
-            }
-        }
-
-        return $regions;
     }
 }
