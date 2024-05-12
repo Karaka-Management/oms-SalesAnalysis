@@ -21,4 +21,10 @@ return ['Navigation' => [
     'Overview'  => 'Overview',
     'Products'  => 'Products',
     'Regions'   => 'Regions',
+    'YTD'   => 'YTD',
+    'MTD'   => 'MTD',
+    'Monthly'   => 'Monthly',
+    'Annually'   => 'Annually',
+    'SalesRep'   => 'Sales Reps',
+    'SalesRep'   => 'Sales Rep',
 ]];

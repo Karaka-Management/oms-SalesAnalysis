@@ -13,7 +13,7 @@
 declare(strict_types=1);
 
 return ['Navigation' => [
-    'Analysis'  => 'Analyse',
+    'Analysis'  => 'Auswertung',
     'Dashboard' => 'Dashboard',
     'Database'  => 'Database',
     'Invoices'  => 'Rechnungen',
@@ -21,4 +21,5 @@ return ['Navigation' => [
     'Overview'  => 'Übersicht',
     'Products'  => 'Produkte',
     'Regions'   => 'Regionen',
+    'SalesRep'   => 'Verkäufer',
 ]];

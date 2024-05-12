@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Modules\SalesAnalysis\Models;
 
+use Modules\Billing\Models\BillStatus;
 use Modules\Billing\Models\BillTransferType;
 use phpOMS\DataStorage\Database\Mapper\DataMapperFactory;
 use phpOMS\DataStorage\Database\Query\Builder;
@@ -58,6 +59,7 @@ class SalesRepMapper extends DataMapperFactory
             WHERE
                 billing_type_transfer_type = ' . BillTransferType::SALES . '
                 AND billing_type_accounting = 1
+                AND billing_bill_status = ' . BillStatus::ARCHIVED . '
                 AND billing_bill_performance_date >= \'' . $start->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $end->format('Y-m-d') . '\'
             GROUP BY
@@ -141,6 +143,7 @@ class SalesRepMapper extends DataMapperFactory
             WHERE
                 billing_type_transfer_type = ' . BillTransferType::SALES . '
                 AND billing_type_accounting = 1
+                AND billing_bill_status = ' . BillStatus::ARCHIVED . '
                 AND billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
@@ -225,6 +228,7 @@ class SalesRepMapper extends DataMapperFactory
             WHERE
                 billing_type_transfer_type = ' . BillTransferType::SALES . '
                 AND billing_type_accounting = 1
+                AND billing_bill_status = ' . BillStatus::ARCHIVED . '
                 AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
@@ -242,11 +246,11 @@ class SalesRepMapper extends DataMapperFactory
         $oldIndex = 1;
         $period   = 1;
 
-        $mtdAClientCountry  = [];
-        $mtdPYClientCountry = [];
+        $mtdAClientRep  = [];
+        $mtdPYClientRep = [];
 
-        $ytdAClientCountry  = [];
-        $ytdPYClientCountry = [];
+        $ytdAClientRep  = [];
+        $ytdPYClientRep = [];
 
         foreach ($results as $result) {
             $monthIndex = SmartDateTime::calculateMonthIndex((int) $result['salesmonth'], $businessStart);
@@ -273,36 +277,36 @@ class SalesRepMapper extends DataMapperFactory
 
             if ($monthIndex === $endCurrentIndex) {
                 if ($period === 1) {
-                    $mtdPYClientCountry[$result['billing_bill_rep']] = $temp;
+                    $mtdPYClientRep[$result['billing_bill_rep']] = $temp;
                 } else {
-                    $mtdAClientCountry[$result['billing_bill_rep']] = $temp;
+                    $mtdAClientRep[$result['billing_bill_rep']] = $temp;
                 }
             }
 
             if ($monthIndex <= $endCurrentIndex) {
-                if (!isset($ytdPYClientCountry[$result['billing_bill_rep']])) {
-                    $ytdPYClientCountry[$result['billing_bill_rep']] = [
+                if (!isset($ytdPYClientRep[$result['billing_bill_rep']])) {
+                    $ytdPYClientRep[$result['billing_bill_rep']] = [
                         'client_count' => 0,
                     ];
 
-                    $ytdAClientCountry[$result['billing_bill_rep']] = [
+                    $ytdAClientRep[$result['billing_bill_rep']] = [
                         'client_count' => 0,
                     ];
                 }
 
                 if ($period === 1) {
-                    $ytdPYClientCountry[$result['billing_bill_rep']]['client_count'] += $temp['client_count'];
+                    $ytdPYClientRep[$result['billing_bill_rep']]['client_count'] += $temp['client_count'];
                 } else {
-                    $ytdAClientCountry[$result['billing_bill_rep']]['client_count'] += $temp['client_count'];
+                    $ytdAClientRep[$result['billing_bill_rep']]['client_count'] += $temp['client_count'];
                 }
             }
         }
 
         return [
-            $mtdPYClientCountry,
-            $mtdAClientCountry,
-            $ytdPYClientCountry,
-            $ytdAClientCountry,
+            $mtdPYClientRep,
+            $mtdAClientRep,
+            $ytdPYClientRep,
+            $ytdAClientRep,
         ];
     }
 
@@ -328,6 +332,10 @@ class SalesRepMapper extends DataMapperFactory
             FROM billing_bill
             LEFT JOIN billing_type
                 ON billing_bill_type = billing_type_id
+            LEFT JOIN sales_rep
+                ON billing_bill_rep = sales_rep_id
+            LEFT JOIN account
+                ON sales_rep_main = account_id
             LEFT JOIN clientmgmt_client
                 ON clientmgmt_client_id = billing_bill_client
             LEFT JOIN address
@@ -335,6 +343,7 @@ class SalesRepMapper extends DataMapperFactory
             WHERE
                 billing_type_transfer_type = ' . BillTransferType::SALES . '
                 AND billing_type_accounting = 1
+                AND billing_bill_status = ' . BillStatus::ARCHIVED . '
                 AND billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $currentEnd->format('Y-m-d') . '\'
             GROUP BY
@@ -402,6 +411,7 @@ class SalesRepMapper extends DataMapperFactory
             WHERE
                 billing_type_transfer_type = ' . BillTransferType::SALES . '
                 AND billing_type_accounting = 1
+                AND billing_bill_status = ' . BillStatus::ARCHIVED . '
                 AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
@@ -419,11 +429,11 @@ class SalesRepMapper extends DataMapperFactory
         $oldIndex = 1;
         $period   = 1;
 
-        $mtdAClientCountry  = [];
-        $mtdPYClientCountry = [];
+        $mtdAClientRep  = [];
+        $mtdPYClientRep = [];
 
-        $ytdAClientCountry  = [];
-        $ytdPYClientCountry = [];
+        $ytdAClientRep  = [];
+        $ytdPYClientRep = [];
 
         foreach ($results as $result) {
             $monthIndex = SmartDateTime::calculateMonthIndex((int) $result['salesmonth'], $businessStart);
@@ -451,40 +461,40 @@ class SalesRepMapper extends DataMapperFactory
 
             if ($monthIndex === $endCurrentIndex) {
                 if ($period === 1) {
-                    $mtdPYClientCountry[$result['billing_bill_rep']] = $temp;
+                    $mtdPYClientRep[$result['billing_bill_rep']] = $temp;
                 } else {
-                    $mtdAClientCountry[$result['billing_bill_rep']] = $temp;
+                    $mtdAClientRep[$result['billing_bill_rep']] = $temp;
                 }
             }
 
             if ($monthIndex <= $endCurrentIndex) {
-                if (!isset($ytdPYClientCountry[$result['billing_bill_rep']])) {
-                    $ytdPYClientCountry[$result['billing_bill_rep']] = [
+                if (!isset($ytdPYClientRep[$result['billing_bill_rep']])) {
+                    $ytdPYClientRep[$result['billing_bill_rep']] = [
                         'net_sales'  => 0,
                         'net_profit' => 0,
                     ];
 
-                    $ytdAClientCountry[$result['billing_bill_rep']] = [
+                    $ytdAClientRep[$result['billing_bill_rep']] = [
                         'net_sales'  => 0,
                         'net_profit' => 0,
                     ];
                 }
 
                 if ($period === 1) {
-                    $ytdPYClientCountry[$result['billing_bill_rep']]['net_sales']  += $temp['net_sales'];
-                    $ytdPYClientCountry[$result['billing_bill_rep']]['net_profit'] += $temp['net_profit'];
+                    $ytdPYClientRep[$result['billing_bill_rep']]['net_sales']  += $temp['net_sales'];
+                    $ytdPYClientRep[$result['billing_bill_rep']]['net_profit'] += $temp['net_profit'];
                 } else {
-                    $ytdAClientCountry[$result['billing_bill_rep']]['net_sales']  += $temp['net_sales'];
-                    $ytdAClientCountry[$result['billing_bill_rep']]['net_profit'] += $temp['net_profit'];
+                    $ytdAClientRep[$result['billing_bill_rep']]['net_sales']  += $temp['net_sales'];
+                    $ytdAClientRep[$result['billing_bill_rep']]['net_profit'] += $temp['net_profit'];
                 }
             }
         }
 
         return [
-            $mtdPYClientCountry,
-            $mtdAClientCountry,
-            $ytdPYClientCountry,
-            $ytdAClientCountry,
+            $mtdPYClientRep,
+            $mtdAClientRep,
+            $ytdPYClientRep,
+            $ytdAClientRep,
         ];
     }
 }

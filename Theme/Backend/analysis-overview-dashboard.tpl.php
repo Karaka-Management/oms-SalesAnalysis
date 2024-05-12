@@ -21,6 +21,7 @@ use phpOMS\Uri\UriFactory;
  */
 echo $this->data['nav']->render();
 ?>
+<!--
 <div class="row">
     <div class="col-xs-12 col-lg-4">
         <section class="portlet">
@@ -87,6 +88,7 @@ echo $this->data['nav']->render();
         </section>
     </div>
 </div>
+-->
 
 <div class="row">
     <div class="col-xs-12 col-lg-6">
@@ -233,12 +235,12 @@ echo $this->data['nav']->render();
                     }
                 }'></canvas>
                 <div class="more-container">
-                    <input id="more-customer-sales" type="checkbox" name="more-container">
-                    <label for="more-customer-sales">
+                    <input id="more-customer-sales" class="more" type="checkbox" name="more-container">
+                    <label class="more" for="more-customer-sales">
                         <span><?= $this->getHtml('Data'); ?></span>
                         <i class="g-icon expand">chevron_right</i>
                     </label>
-                    <div class="slider">
+                    <div class="slider more">
                     <table class="default sticky">
                         <thead>
                             <tr>
@@ -380,12 +382,12 @@ echo $this->data['nav']->render();
                     }
                 }'></canvas>
                 <div class="more-container">
-                    <input id="more-customer-sales-annual" type="checkbox" name="more-container">
-                    <label for="more-customer-sales-annual">
+                    <input id="more-customer-sales-annual" class="more" type="checkbox" name="more-container">
+                    <label class="more" for="more-customer-sales-annual">
                         <span><?= $this->getHtml('Data'); ?></span>
                         <i class="g-icon expand">chevron_right</i>
                     </label>
-                    <div class="slider">
+                    <div class="slider more">
                     <table class="default sticky">
                         <thead>
                             <tr>
@@ -397,7 +399,7 @@ echo $this->data['nav']->render();
                         foreach ($sales as $values) :
                         ?>
                             <tr>
-                                <td>
+                                <td><?= $this->printHtml($values['year']); ?>
                                 <td><?= $this->getCurrency(((int) $values['net_sales']) / FloatInt::DIVISOR, symbol: ''); ?>
                                 <td><?= \sprintf('%.2f', $values['net_sales'] == 0 ? 0 : $values['net_profit'] * 100 / $values['net_sales']); ?> %
                         <?php endforeach; ?>
@@ -406,90 +408,6 @@ echo $this->data['nav']->render();
                 </div>
             </div>
         </section>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-xs-12">
-        <section class="portlet">
-            <div class="portlet-head">
-                <?= $this->getHtml('ItemAttribute'); ?>
-            </div>
-            <div class="slider">
-            <table class="default sticky">
-                <thead>
-                    <tr>
-                        <td><?= $this->getHtml('Category'); ?>
-                        <td><?= $this->getHtml('SalesPY'); ?> (<?= $this->getHtml('YTD'); ?>)
-                        <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('YTD'); ?>)
-                        <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('YTD'); ?>)
-                        <td><?= $this->getHtml('SalesPY'); ?> (<?= $this->getHtml('MTD'); ?>)
-                        <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('MTD'); ?>)
-                        <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
-                <tbody>
-                    <?php foreach ($this->data['ytdAItemAttribute'] as $type => $values) : ?>
-                        <tr>
-                            <td><?= $this->printHtml($this->data['ytdPYItemAttribute'][$type]['value_l11n']); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
-                            <td><?= $this->getCurrency(
-                                ((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                ((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0)),
-                                symbol: ''
-                            ); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
-                            <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
-                            <td><?= $this->getCurrency(
-                                ((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                ((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0)),
-                                symbol: ''
-                            ); ?>
-                    <?php endforeach; ?>
-            </table>
-            </div>
-       </section>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-xs-12">
-        <section class="portlet">
-            <div class="portlet-head">
-                <?= $this->getHtml('ClientAttribute'); ?>
-            </div>
-            <div class="slider">
-            <table class="default sticky">
-                <thead>
-                    <tr>
-                        <td><?= $this->getHtml('Category'); ?>
-                        <td><?= $this->getHtml('SalesPY'); ?> (<?= $this->getHtml('YTD'); ?>)
-                        <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('YTD'); ?>)
-                        <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('YTD'); ?>)
-                        <td><?= $this->getHtml('SalesPY'); ?> (<?= $this->getHtml('MTD'); ?>)
-                        <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('MTD'); ?>)
-                        <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
-                <tbody>
-                    <?php foreach ($this->data['ytdAClientAttribute'] as $type => $values) : ?>
-                    <tr>
-                        <td><?= $this->printHtml($this->data['ytdPYClientAttribute'][$type]['value_l11n']); ?>
-                        <td><?= $this->getCurrency((int) ($this->data['ytdPYClientAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
-                        <td><?= $this->getCurrency((int) ($this->data['ytdAClientAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
-                        <td><?= $this->getCurrency(
-                            ((int) ($this->data['ytdAClientAttribute'][$type]['net_sales'] ?? 0)) -
-                            ((int) ($this->data['ytdPYClientAttribute'][$type]['net_sales'] ?? 0)),
-                            symbol: ''
-                        ); ?>
-                        <td><?= $this->getCurrency((int) ($this->data['mtdPYClientAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
-                        <td><?= $this->getCurrency((int) ($this->data['mtdAClientAttribute'][$type]['net_sales'] ?? 0), symbol: ''); ?>
-                        <td><?= $this->getCurrency(
-                            ((int) ($this->data['mtdAClientAttribute'][$type]['net_sales'] ?? 0)) -
-                            ((int) ($this->data['mtdPYClientAttribute'][$type]['net_sales'] ?? 0)),
-                            symbol: ''
-                        ); ?>
-                    <?php endforeach; ?>
-            </table>
-            </div>
-       </section>
     </div>
 </div>
 
@@ -511,7 +429,10 @@ echo $this->data['nav']->render();
                         <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('MTD'); ?>)
                         <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
                 <tbody>
-                    <?php foreach ($this->data['ytdAClientCountry'] as $type => $values) : ?>
+                    <?php
+                    \uasort($this->data['ytdAClientCountry'], function (array $a, array $b) { return (($b['net_sales'] ?? 0) <=> $a['net_sales'] ?? 0); });
+                    foreach ($this->data['ytdAClientCountry'] as $type => $values) :
+                    ?>
                     <tr>
                         <td><?= $this->printHtml(ISO3166NameEnum::getBy2Code($type)); ?>
                         <td><?= $this->getCurrency((int) ($this->data['ytdPYClientCountry'][$type]['net_sales'] ?? 0), symbol: ''); ?>

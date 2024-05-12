@@ -49,29 +49,26 @@ echo $this->data['nav']->render();
                                     <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
                             <tbody>
                                 <?php
-                                    foreach ($this->data['ytdAItemAttribute'] as $type => $values) :
-                                        if ($type !== 'segment') {
-                                            continue;
-                                        }
+                                    foreach ($this->data['ytdAItemAttribute']['segment'] as $values) :
                                 ?>
                                     <tr>
-                                        <td><?= $this->printHtml($this->data['ytdPYItemAttribute'][$type]['value_l11n']); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->printHtml($values['value_l11n']); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute']['segment'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute']['segment'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
                                         <td><?= $this->getCurrency(
-                                            ((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                            ((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                                            ((int) ($this->data['ytdAItemAttribute']['segment'][$values['value_l11n']]['net_sales'] ?? 0)) -
+                                            ((int) ($this->data['ytdPYItemAttribute']['segment'][$values['value_l11n']]['net_sales'] ?? 0))
                                         ); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute']['segment'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute']['segment'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
                                         <td><?= $this->getCurrency(
-                                            ((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                            ((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                                            ((int) ($this->data['mtdAItemAttribute']['segment'][$values['value_l11n']]['net_sales'] ?? 0)) -
+                                            ((int) ($this->data['mtdPYItemAttribute']['segment'][$values['value_l11n']]['net_sales'] ?? 0))
                                         ); ?>
                                 <?php endforeach; ?>
                         </table>
                         </div>
-                </section>
+                    </section>
                 </div>
             </div>
         </div>
@@ -94,25 +91,22 @@ echo $this->data['nav']->render();
                                     <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('MTD'); ?>)
                                     <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
                             <tbody>
-                                <?php
-                                    foreach ($this->data['ytdAItemAttribute'] as $type => $values) :
-                                        if ($type !== 'section') {
-                                            continue;
-                                        }
+                            <?php
+                                    foreach ($this->data['ytdAItemAttribute']['section'] as $values) :
                                 ?>
                                     <tr>
-                                        <td><?= $this->printHtml($this->data['ytdPYItemAttribute'][$type]['value_l11n']); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->printHtml($values['value_l11n']); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute']['section'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute']['section'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
                                         <td><?= $this->getCurrency(
-                                            ((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                            ((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                                            ((int) ($this->data['ytdAItemAttribute']['section'][$values['value_l11n']]['net_sales'] ?? 0)) -
+                                            ((int) ($this->data['ytdPYItemAttribute']['section'][$values['value_l11n']]['net_sales'] ?? 0))
                                         ); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute']['section'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute']['section'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
                                         <td><?= $this->getCurrency(
-                                            ((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                            ((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                                            ((int) ($this->data['mtdAItemAttribute']['section'][$values['value_l11n']]['net_sales'] ?? 0)) -
+                                            ((int) ($this->data['mtdPYItemAttribute']['section'][$values['value_l11n']]['net_sales'] ?? 0))
                                         ); ?>
                                 <?php endforeach; ?>
                         </table>
@@ -141,24 +135,21 @@ echo $this->data['nav']->render();
                                     <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
                             <tbody>
                                 <?php
-                                    foreach ($this->data['ytdAItemAttribute'] as $type => $values) :
-                                        if ($type !== 'sales_group') {
-                                            continue;
-                                        }
+                                    foreach ($this->data['ytdAItemAttribute']['sales_group'] as $values) :
                                 ?>
                                     <tr>
-                                        <td><?= $this->printHtml($this->data['ytdPYItemAttribute'][$type]['value_l11n']); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->printHtml($values['value_l11n']); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute']['sales_group'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute']['sales_group'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
                                         <td><?= $this->getCurrency(
-                                            ((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                            ((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                                            ((int) ($this->data['ytdAItemAttribute']['sales_group'][$values['value_l11n']]['net_sales'] ?? 0)) -
+                                            ((int) ($this->data['ytdPYItemAttribute']['sales_group'][$values['value_l11n']]['net_sales'] ?? 0))
                                         ); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute']['sales_group'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute']['sales_group'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
                                         <td><?= $this->getCurrency(
-                                            ((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                            ((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                                            ((int) ($this->data['mtdAItemAttribute']['sales_group'][$values['value_l11n']]['net_sales'] ?? 0)) -
+                                            ((int) ($this->data['mtdPYItemAttribute']['sales_group'][$values['value_l11n']]['net_sales'] ?? 0))
                                         ); ?>
                                 <?php endforeach; ?>
                         </table>
@@ -187,24 +178,21 @@ echo $this->data['nav']->render();
                                     <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
                             <tbody>
                                 <?php
-                                    foreach ($this->data['ytdAItemAttribute'] as $type => $values) :
-                                        if ($type !== 'product_group') {
-                                            continue;
-                                        }
+                                    foreach ($this->data['ytdAItemAttribute']['product_group'] as $values) :
                                 ?>
                                     <tr>
-                                        <td><?= $this->printHtml($this->data['ytdPYItemAttribute'][$type]['value_l11n']); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->printHtml($values['value_l11n']); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute']['product_group'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute']['product_group'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
                                         <td><?= $this->getCurrency(
-                                            ((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                            ((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                                            ((int) ($this->data['ytdAItemAttribute']['product_group'][$values['value_l11n']]['net_sales'] ?? 0)) -
+                                            ((int) ($this->data['ytdPYItemAttribute']['product_group'][$values['value_l11n']]['net_sales'] ?? 0))
                                         ); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute']['product_group'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute']['product_group'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
                                         <td><?= $this->getCurrency(
-                                            ((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                            ((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                                            ((int) ($this->data['mtdAItemAttribute']['product_group'][$values['value_l11n']]['net_sales'] ?? 0)) -
+                                            ((int) ($this->data['mtdPYItemAttribute']['product_group'][$values['value_l11n']]['net_sales'] ?? 0))
                                         ); ?>
                                 <?php endforeach; ?>
                         </table>
@@ -233,24 +221,21 @@ echo $this->data['nav']->render();
                                     <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
                             <tbody>
                                 <?php
-                                    foreach ($this->data['ytdAItemAttribute'] as $type => $values) :
-                                        if ($type !== 'product_type') {
-                                            continue;
-                                        }
+                                    foreach ($this->data['ytdAItemAttribute']['product_type'] as $values) :
                                 ?>
                                     <tr>
-                                        <td><?= $this->printHtml($this->data['ytdPYItemAttribute'][$type]['value_l11n']); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->printHtml($values['value_l11n']); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['ytdPYItemAttribute']['product_type'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['ytdAItemAttribute']['product_type'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
                                         <td><?= $this->getCurrency(
-                                            ((int) ($this->data['ytdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                            ((int) ($this->data['ytdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                                            ((int) ($this->data['ytdAItemAttribute']['product_type'][$values['value_l11n']]['net_sales'] ?? 0)) -
+                                            ((int) ($this->data['ytdPYItemAttribute']['product_type'][$values['value_l11n']]['net_sales'] ?? 0))
                                         ); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0)); ?>
-                                        <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['mtdPYItemAttribute']['product_type'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
+                                        <td><?= $this->getCurrency((int) ($this->data['mtdAItemAttribute']['product_type'][$values['value_l11n']]['net_sales'] ?? 0)); ?>
                                         <td><?= $this->getCurrency(
-                                            ((int) ($this->data['mtdAItemAttribute'][$type]['net_sales'] ?? 0)) -
-                                            ((int) ($this->data['mtdPYItemAttribute'][$type]['net_sales'] ?? 0))
+                                            ((int) ($this->data['mtdAItemAttribute']['product_type'][$values['value_l11n']]['net_sales'] ?? 0)) -
+                                            ((int) ($this->data['mtdPYItemAttribute']['product_type'][$values['value_l11n']]['net_sales'] ?? 0))
                                         ); ?>
                                 <?php endforeach; ?>
                         </table>

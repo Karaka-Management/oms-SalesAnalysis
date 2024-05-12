@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Modules\SalesAnalysis\Models;
 
+use Modules\Billing\Models\BillStatus;
 use Modules\Billing\Models\BillTransferType;
 use phpOMS\DataStorage\Database\Mapper\DataMapperFactory;
 use phpOMS\DataStorage\Database\Query\Builder;
@@ -62,6 +63,7 @@ class RegionMapper extends DataMapperFactory
             WHERE
                 billing_type_transfer_type = ' . BillTransferType::SALES . '
                 AND billing_type_accounting = 1
+                AND billing_bill_status = ' . BillStatus::ARCHIVED . '
                 AND billing_bill_performance_date >= \'' . $start->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $end->format('Y-m-d') . '\'
             GROUP BY
@@ -145,6 +147,7 @@ class RegionMapper extends DataMapperFactory
             WHERE
                 billing_type_transfer_type = ' . BillTransferType::SALES . '
                 AND billing_type_accounting = 1
+                AND billing_bill_status = ' . BillStatus::ARCHIVED . '
                 AND billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
@@ -229,6 +232,7 @@ class RegionMapper extends DataMapperFactory
             WHERE
                 billing_type_transfer_type = ' . BillTransferType::SALES . '
                 AND billing_type_accounting = 1
+                AND billing_bill_status = ' . BillStatus::ARCHIVED . '
                 AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY
@@ -339,6 +343,7 @@ class RegionMapper extends DataMapperFactory
             WHERE
                 billing_type_transfer_type = ' . BillTransferType::SALES . '
                 AND billing_type_accounting = 1
+                AND billing_bill_status = ' . BillStatus::ARCHIVED . '
                 AND billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $currentEnd->format('Y-m-d') . '\'
             GROUP BY
@@ -406,6 +411,7 @@ class RegionMapper extends DataMapperFactory
             WHERE
                 billing_type_transfer_type = ' . BillTransferType::SALES . '
                 AND billing_type_accounting = 1
+                AND billing_bill_status = ' . BillStatus::ARCHIVED . '
                 AND billing_bill_performance_date >= \'' . $startComparison->format('Y-m-d') . '\'
                 AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
             GROUP BY

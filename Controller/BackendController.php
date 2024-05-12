@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Modules\SalesAnalysis\Controller;
 
 use Modules\Organization\Models\UnitMapper;
+use Modules\Sales\Models\SalesRepMapper as ModelsSalesRepMapper;
 use Modules\SalesAnalysis\Models\ClientMapper;
 use Modules\SalesAnalysis\Models\GeneralMapper;
 use Modules\SalesAnalysis\Models\ItemMapper;
@@ -58,7 +59,7 @@ final class BackendController extends Controller
      *
      * @since 1.0.0
      */
-    public function viewDashboard(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
+    public function viewDashboardYtd(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
     {
         $head  = $response->data['Content']->head;
         $nonce = $this->app->appSettings->getOption('script-nonce');
@@ -162,7 +163,7 @@ final class BackendController extends Controller
      * @since 1.0.0
      * @codeCoverageIgnore
      */
-    public function viewRegionAnalysis(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
+    public function viewRegionAnalysisYtd(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
     {
         $head  = $response->data['Content']->head;
         $nonce = $this->app->appSettings->getOption('script-nonce');
@@ -355,7 +356,7 @@ final class BackendController extends Controller
      * @since 1.0.0
      * @codeCoverageIgnore
      */
-    public function viewSalesRepAnalysis(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
+    public function viewSalesRepAnalysisYtd(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
     {
         $head  = $response->data['Content']->head;
         $nonce = $this->app->appSettings->getOption('script-nonce');
@@ -365,8 +366,9 @@ final class BackendController extends Controller
         $head->addAsset(AssetType::JSLATE, 'Modules/SalesAnalysis/Controller/Controller.js?v=' . self::VERSION, ['nonce' => $nonce, 'type' => 'module']);
 
         $view = new View($this->app->l11nManager, $request, $response);
-        $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-rep');
+        $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-rep-ytd');
         $view->data['nav'] = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
+        $view->data['nav-sub'] = $this->app->moduleManager->get('Navigation')->createNavigationMidSub(1005407001, $request, $response);
 
         $businessStart   = 1;
         $startOfYear     = SmartDateTime::createFromDateTime(SmartDateTime::startOfYear($businessStart));
@@ -383,30 +385,11 @@ final class BackendController extends Controller
         $view->data['endComparison']   = $endComparison;
         $view->data['historyStart']    = $historyStart;
 
-        $domestic = UnitMapper::get()
-            ->with('mainAddress')
-            ->where('id', $this->app->unitId)
-            ->execute();
-
-        [
-            $mtdCurrent,
-            $ytdCurrent,
-            $monthlyCurrent
-        ] = SalesRepMapper::monthlySalesProfit(
-            $startCurrent,
-            $endCurrent,
-            $businessStart
-        );
-
-        [
-            $mtdPY,
-            $ytdPY,
-            $monthlyPY
-        ] = SalesRepMapper::monthlySalesProfit(
-            $startComparison,
-            $endComparison,
-            $businessStart
-        );
+        $view->data['salesRep'] = ModelsSalesRepMapper::getAll()
+            ->with('main')
+            ->with('main/account')
+            ->where('unit', $this->app->unitId)
+            ->executeGetArray();
 
         [
             $view->data['mtdPYClientRep'],
@@ -420,8 +403,6 @@ final class BackendController extends Controller
             $endComparison,
             $businessStart
         );
-
-        $annualRepSales = SalesRepMapper::salesProfitRep($historyStart, $startCurrent, $startCurrent, $endCurrent);
 
         [
             $view->data['mtdPYClientRepCount'],
@@ -453,7 +434,242 @@ final class BackendController extends Controller
      * @since 1.0.0
      * @codeCoverageIgnore
      */
-    public function viewBillAnalysis(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
+    public function viewSalesRepAnalysisMtd(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
+    {
+        $head  = $response->data['Content']->head;
+        $nonce = $this->app->appSettings->getOption('script-nonce');
+
+        $head->addAsset(AssetType::CSS, 'Resources/chartjs/chart.css?v=' . $this->app->version);
+        $head->addAsset(AssetType::JSLATE, 'Resources/chartjs/chart.js?v=' . $this->app->version, ['nonce' => $nonce]);
+        $head->addAsset(AssetType::JSLATE, 'Modules/SalesAnalysis/Controller/Controller.js?v=' . self::VERSION, ['nonce' => $nonce, 'type' => 'module']);
+
+        $view = new View($this->app->l11nManager, $request, $response);
+        $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-rep-mtd');
+        $view->data['nav'] = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
+        $view->data['nav-sub'] = $this->app->moduleManager->get('Navigation')->createNavigationMidSub(1005407001, $request, $response);
+
+        $businessStart   = 1;
+        $startOfYear     = SmartDateTime::createFromDateTime(SmartDateTime::startOfYear($businessStart));
+        $startCurrent    = $request->getDataDateTime('startcurrent') ?? clone $startOfYear;
+        $endCurrent      = $request->getDataDateTime('endcurrent') ?? SmartDateTime::endOfMonth();
+        $endCurrentIndex = SmartDateTime::calculateMonthIndex((int) $endCurrent->format('m'), $businessStart);
+        $startComparison = $request->getDataDateTime('startcomparison') ?? SmartDateTime::createFromDateTime($startCurrent)->createModify(-1);
+        $endComparison   = $request->getDataDateTime('endcomparison') ?? SmartDateTime::createFromDateTime(SmartDateTime::endOfYear($businessStart))->smartModify(-1);
+        $historyStart    = $startOfYear->createModify(-9);
+
+        $view->data['startCurrent']    = $startCurrent;
+        $view->data['endCurrent']      = $endCurrent;
+        $view->data['startComparison'] = $startComparison;
+        $view->data['endComparison']   = $endComparison;
+        $view->data['historyStart']    = $historyStart;
+
+        $view->data['salesRep'] = ModelsSalesRepMapper::getAll()
+            ->with('main')
+            ->with('main/account')
+            ->where('unit', $this->app->unitId)
+            ->executeGetArray();
+
+        [
+            $view->data['mtdPYClientRep'],
+            $view->data['mtdAClientRep'],
+            $view->data['ytdPYClientRep'],
+            $view->data['ytdAClientRep'],
+        ] = SalesRepMapper::mtdYtdRep(
+            $startCurrent,
+            $endCurrent,
+            $startComparison,
+            $endComparison,
+            $businessStart
+        );
+
+        [
+            $view->data['mtdPYClientRepCount'],
+            $view->data['mtdAClientRepCount'],
+            $view->data['ytdPYClientRepCount'],
+            $view->data['ytdAClientRepCount'],
+        ] = SalesRepMapper::mtdYtdClientRep(
+            $startCurrent,
+            $endCurrent,
+            $startComparison,
+            $endComparison,
+            $businessStart
+        );
+
+        $annualRepCount = SalesRepMapper::annualCustomerRep(clone $historyStart, $endCurrent);
+
+        return $view;
+    }
+
+    /**
+     * Routing end-point for application behavior.
+     *
+     * @param RequestAbstract  $request  Request
+     * @param ResponseAbstract $response Response
+     * @param array            $data     Generic data
+     *
+     * @return RenderableInterface
+     *
+     * @since 1.0.0
+     * @codeCoverageIgnore
+     */
+    public function viewSalesRepAnalysisMonthly(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
+    {
+        $head  = $response->data['Content']->head;
+        $nonce = $this->app->appSettings->getOption('script-nonce');
+
+        $head->addAsset(AssetType::CSS, 'Resources/chartjs/chart.css?v=' . $this->app->version);
+        $head->addAsset(AssetType::JSLATE, 'Resources/chartjs/chart.js?v=' . $this->app->version, ['nonce' => $nonce]);
+        $head->addAsset(AssetType::JSLATE, 'Modules/SalesAnalysis/Controller/Controller.js?v=' . self::VERSION, ['nonce' => $nonce, 'type' => 'module']);
+
+        $view = new View($this->app->l11nManager, $request, $response);
+        $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-rep-monthly');
+        $view->data['nav'] = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
+        $view->data['nav-sub'] = $this->app->moduleManager->get('Navigation')->createNavigationMidSub(1005407001, $request, $response);
+
+        $businessStart   = 1;
+        $startOfYear     = SmartDateTime::createFromDateTime(SmartDateTime::startOfYear($businessStart));
+        $startCurrent    = $request->getDataDateTime('startcurrent') ?? clone $startOfYear;
+        $endCurrent      = $request->getDataDateTime('endcurrent') ?? SmartDateTime::endOfMonth();
+        $endCurrentIndex = SmartDateTime::calculateMonthIndex((int) $endCurrent->format('m'), $businessStart);
+        $startComparison = $request->getDataDateTime('startcomparison') ?? SmartDateTime::createFromDateTime($startCurrent)->createModify(-1);
+        $endComparison   = $request->getDataDateTime('endcomparison') ?? SmartDateTime::createFromDateTime(SmartDateTime::endOfYear($businessStart))->smartModify(-1);
+        $historyStart    = $startOfYear->createModify(-9);
+
+        $view->data['startCurrent']    = $startCurrent;
+        $view->data['endCurrent']      = $endCurrent;
+        $view->data['startComparison'] = $startComparison;
+        $view->data['endComparison']   = $endComparison;
+        $view->data['endCurrentIndex']   = $endCurrentIndex;
+        $view->data['historyStart']    = $historyStart;
+
+        $view->data['salesRep'] = ModelsSalesRepMapper::getAll()
+            ->with('main')
+            ->with('main/account')
+            ->where('unit', $this->app->unitId)
+            ->executeGetArray();
+
+
+        [
+            $mtdCurrent,
+            $ytdCurrent,
+            $monthlyCurrent
+        ] = SalesRepMapper::monthlySalesProfit(
+            $startCurrent,
+            $endCurrent,
+            $businessStart
+        );
+
+        $view->data['monthlyRepCurrent'] = $monthlyCurrent;
+
+        [
+            $mtdPY,
+            $ytdPY,
+            $monthlyPY
+        ] = SalesRepMapper::monthlySalesProfit(
+            $startComparison,
+            $endComparison,
+            $businessStart
+        );
+
+        $view->data['monthlyRepPY'] = $monthlyPY;
+
+        return $view;
+    }
+
+    /**
+     * Routing end-point for application behavior.
+     *
+     * @param RequestAbstract  $request  Request
+     * @param ResponseAbstract $response Response
+     * @param array            $data     Generic data
+     *
+     * @return RenderableInterface
+     *
+     * @since 1.0.0
+     * @codeCoverageIgnore
+     */
+    public function viewSalesRepAnalysisAnnually(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
+    {
+        $head  = $response->data['Content']->head;
+        $nonce = $this->app->appSettings->getOption('script-nonce');
+
+        $head->addAsset(AssetType::CSS, 'Resources/chartjs/chart.css?v=' . $this->app->version);
+        $head->addAsset(AssetType::JSLATE, 'Resources/chartjs/chart.js?v=' . $this->app->version, ['nonce' => $nonce]);
+        $head->addAsset(AssetType::JSLATE, 'Modules/SalesAnalysis/Controller/Controller.js?v=' . self::VERSION, ['nonce' => $nonce, 'type' => 'module']);
+
+        $view = new View($this->app->l11nManager, $request, $response);
+        $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-rep-annually');
+        $view->data['nav'] = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
+        $view->data['nav-sub'] = $this->app->moduleManager->get('Navigation')->createNavigationMidSub(1005407001, $request, $response);
+
+        $businessStart   = 1;
+        $startOfYear     = SmartDateTime::createFromDateTime(SmartDateTime::startOfYear($businessStart));
+        $startCurrent    = $request->getDataDateTime('startcurrent') ?? clone $startOfYear;
+        $endCurrent      = $request->getDataDateTime('endcurrent') ?? SmartDateTime::endOfMonth();
+        $endCurrentIndex = SmartDateTime::calculateMonthIndex((int) $endCurrent->format('m'), $businessStart);
+        $startComparison = $request->getDataDateTime('startcomparison') ?? SmartDateTime::createFromDateTime($startCurrent)->createModify(-1);
+        $endComparison   = $request->getDataDateTime('endcomparison') ?? SmartDateTime::createFromDateTime(SmartDateTime::endOfYear($businessStart))->smartModify(-1);
+        $historyStart    = $startOfYear->createModify(-9);
+
+        $view->data['startCurrent']    = $startCurrent;
+        $view->data['endCurrent']      = $endCurrent;
+        $view->data['startComparison'] = $startComparison;
+        $view->data['endComparison']   = $endComparison;
+        $view->data['historyStart']    = $historyStart;
+
+        $view->data['salesRep'] = ModelsSalesRepMapper::getAll()
+            ->with('main')
+            ->with('main/account')
+            ->where('unit', $this->app->unitId)
+            ->executeGetArray();
+
+
+        [
+            $view->data['mtdPYClientRep'],
+            $view->data['mtdAClientRep'],
+            $view->data['ytdPYClientRep'],
+            $view->data['ytdAClientRep'],
+        ] = SalesRepMapper::mtdYtdRep(
+            $startCurrent,
+            $endCurrent,
+            $startComparison,
+            $endComparison,
+            $businessStart
+        );
+
+        $view->data['annualRep'] = SalesRepMapper::salesProfitRep($historyStart, $startCurrent, $startCurrent, $endCurrent);
+
+        [
+            $view->data['mtdPYClientRepCount'],
+            $view->data['mtdAClientRepCount'],
+            $view->data['ytdPYClientRepCount'],
+            $view->data['ytdAClientRepCount'],
+        ] = SalesRepMapper::mtdYtdClientRep(
+            $startCurrent,
+            $endCurrent,
+            $startComparison,
+            $endComparison,
+            $businessStart
+        );
+
+        $annualRepCount = SalesRepMapper::annualCustomerRep(clone $historyStart, $endCurrent);
+
+        return $view;
+    }
+
+    /**
+     * Routing end-point for application behavior.
+     *
+     * @param RequestAbstract  $request  Request
+     * @param ResponseAbstract $response Response
+     * @param array            $data     Generic data
+     *
+     * @return RenderableInterface
+     *
+     * @since 1.0.0
+     * @codeCoverageIgnore
+     */
+    public function viewBillAnalysisYtd(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
     {
         $head  = $response->data['Content']->head;
         $nonce = $this->app->appSettings->getOption('script-nonce');
@@ -481,7 +697,7 @@ final class BackendController extends Controller
      * @since 1.0.0
      * @codeCoverageIgnore
      */
-    public function viewClientAnalysis(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
+    public function viewClientAnalysisYtd(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
     {
         $head  = $response->data['Content']->head;
         $nonce = $this->app->appSettings->getOption('script-nonce');
@@ -656,7 +872,7 @@ final class BackendController extends Controller
      * @since 1.0.0
      * @codeCoverageIgnore
      */
-    public function viewItemSalesAnalysis(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
+    public function viewItemSalesAnalysisYtd(RequestAbstract $request, ResponseAbstract $response, array $data = []) : RenderableInterface
     {
         $head  = $response->data['Content']->head;
         $nonce = $this->app->appSettings->getOption('script-nonce');

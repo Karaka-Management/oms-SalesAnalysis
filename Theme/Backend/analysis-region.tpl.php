@@ -85,7 +85,7 @@ echo $this->data['nav']->render();
                         <div class="portlet-head">
                             <?= $this->getHtml('Country'); ?>
                         </div>
-                        <div class="slider">
+                        <div class="slider more">
                         <table class="default sticky">
                             <thead>
                                 <tr>
@@ -97,7 +97,10 @@ echo $this->data['nav']->render();
                                     <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('MTD'); ?>)
                                     <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
                             <tbody>
-                                <?php foreach ($this->data['ytdAClientCountry'] as $type => $values) : ?>
+                                <?php
+                                \uasort($this->data['ytdAClientCountry'], function (array $a, array $b) { return (($b['net_sales'] ?? 0) <=> $a['net_sales'] ?? 0); });
+                                foreach ($this->data['ytdAClientCountry'] as $type => $values) :
+                                ?>
                                     <tr>
                                         <td><?= $this->printHtml(ISO3166NameEnum::getBy2Code($type)); ?>
                                         <td><?= $this->getCurrency((int) ($this->data['ytdPYClientCountry'][$type]['net_sales'] ?? 0), symbol: ''); ?>
@@ -270,12 +273,12 @@ echo $this->data['nav']->render();
                                 }
                             }'></canvas>
                             <div class="more-container">
-                                <input id="more-domestic-monthly-sales" type="checkbox" name="more-container">
-                                <label for="more-domestic-monthly-sales">
+                                <input class="more" id="more-domestic-monthly-sales" type="checkbox" name="more-container">
+                                <label class="more" for="more-domestic-monthly-sales">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -460,12 +463,12 @@ echo $this->data['nav']->render();
                                 }
                             }'></canvas>
                             <div class="more-container">
-                                <input id="more-export-monthly-sales" type="checkbox" name="more-container">
-                                <label for="more-export-monthly-sales">
+                                <input class="more" id="more-export-monthly-sales" type="checkbox" name="more-container">
+                                <label class="more" for="more-export-monthly-sales">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -536,12 +539,12 @@ echo $this->data['nav']->render();
                             }'></canvas>
 
                             <div class="more-container">
-                                <input id="more-domestic-export-region" type="checkbox" name="more-container">
-                                <label for="more-domestic-export-region">
+                                <input class="more" id="more-domestic-export-region" type="checkbox" name="more-container">
+                                <label class="more" for="more-domestic-export-region">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -611,12 +614,12 @@ echo $this->data['nav']->render();
                             }'></canvas>
 
                             <div class="more-container">
-                                <input id="more-sales-domestic-export-annual" type="checkbox" name="more-container">
-                                <label for="more-sales-domestic-export-annual">
+                                <input class="more" id="more-sales-domestic-export-annual" type="checkbox" name="more-container">
+                                <label class="more" for="more-sales-domestic-export-annual">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -677,12 +680,12 @@ echo $this->data['nav']->render();
                             }'></canvas>
 
                             <div class="more-container">
-                                <input id="more-domestic-export-profit" type="checkbox" name="more-container">
-                                <label for="more-domestic-export-profit">
+                                <input class="more" id="more-domestic-export-profit" type="checkbox" name="more-container">
+                                <label class="more" for="more-domestic-export-profit">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -762,12 +765,12 @@ echo $this->data['nav']->render();
                             }'></canvas>
 
                             <div class="more-container">
-                                <input id="more-profit-domestic-export-annual" type="checkbox" name="more-container">
-                                <label for="more-profit-domestic-export-annual">
+                                <input class="more" id="more-profit-domestic-export-annual" type="checkbox" name="more-container">
+                                <label class="more" for="more-profit-domestic-export-annual">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -828,12 +831,12 @@ echo $this->data['nav']->render();
                             }'></canvas>
 
                             <div class="more-container">
-                                <input id="more-client-count-domestic-export-region" type="checkbox" name="more-container">
-                                <label for="more-client-count-domestic-export-region">
+                                <input class="more" id="more-client-count-domestic-export-region" type="checkbox" name="more-container">
+                                <label class="more" for="more-client-count-domestic-export-region">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -903,12 +906,12 @@ echo $this->data['nav']->render();
                             }'></canvas>
 
                             <div class="more-container">
-                                <input id="more-client-count-domestic-export-annual" type="checkbox" name="more-container">
-                                <label for="more-client-count-domestic-export-annual">
+                                <input class="more" id="more-client-count-domestic-export-annual" type="checkbox" name="more-container">
+                                <label class="more" for="more-client-count-domestic-export-annual">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -972,12 +975,12 @@ echo $this->data['nav']->render();
                             }'></canvas>
 
                             <div class="more-container">
-                                <input id="more-continent-region" type="checkbox" name="more-container">
-                                <label for="more-continent-region">
+                                <input class="more" id="more-continent-region" type="checkbox" name="more-container">
+                                <label class="more" for="more-continent-region">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -1047,12 +1050,12 @@ echo $this->data['nav']->render();
                             }'></canvas>
 
                             <div class="more-container">
-                                <input id="more-sales-continent-annual" type="checkbox" name="more-container">
-                                <label for="more-sales-continent-annual">
+                                <input class="more" id="more-sales-continent-annual" type="checkbox" name="more-container">
+                                <label class="more" for="more-sales-continent-annual">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -1113,12 +1116,12 @@ echo $this->data['nav']->render();
                             }'></canvas>
 
                             <div class="more-container">
-                                <input id="more-continent-profit" type="checkbox" name="more-container">
-                                <label for="more-continent-profit">
+                                <input class="more" id="more-continent-profit" type="checkbox" name="more-container">
+                                <label class="more" for="more-continent-profit">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -1198,12 +1201,12 @@ echo $this->data['nav']->render();
                             }'></canvas>
 
                             <div class="more-container">
-                                <input id="more-profit-continent-annual" type="checkbox" name="more-container">
-                                <label for="more-profit-continent-annual">
+                                <input class="more" id="more-profit-continent-annual" type="checkbox" name="more-container">
+                                <label class="more" for="more-profit-continent-annual">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -1264,12 +1267,12 @@ echo $this->data['nav']->render();
                             }'></canvas>
 
                             <div class="more-container">
-                                <input id="more-client-count-continent-region" type="checkbox" name="more-container">
-                                <label for="more-client-count-continent-region">
+                                <input class="more" id="more-client-count-continent-region" type="checkbox" name="more-container">
+                                <label class="more" for="more-client-count-continent-region">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -1339,12 +1342,12 @@ echo $this->data['nav']->render();
                             }'></canvas>
 
                             <div class="more-container">
-                                <input id="more-client-count-continent-annual" type="checkbox" name="more-container">
-                                <label for="more-client-count-continent-annual">
+                                <input class="more" id="more-client-count-continent-annual" type="checkbox" name="more-container">
+                                <label class="more" for="more-client-count-continent-annual">
                                     <span><?= $this->getHtml('Data'); ?></span>
                                     <i class="g-icon expand">chevron_right</i>
                                 </label>
-                                <div class="slider">
+                                <div class="slider more">
                                 <table class="default sticky">
                                     <thead>
                                         <tr>
@@ -1383,7 +1386,7 @@ echo $this->data['nav']->render();
                 <div class="col-xs-12">
                     <section class="portlet">
                         <div class="portlet-head"><?= $this->getHtml('Sales'); ?></div>
-                        <div class="slider">
+                        <div class="slider more">
                         <table class="default sticky">
                             <thead>
                                 <tr>
@@ -1395,7 +1398,10 @@ echo $this->data['nav']->render();
                                     <td><?= $this->getHtml('SalesA'); ?> (<?= $this->getHtml('MTD'); ?>)
                                     <td><?= $this->getHtml('DiffPY'); ?> (<?= $this->getHtml('MTD'); ?>)
                             <tbody>
-                                <?php foreach ($this->data['ytdARegions'] as $type => $values) : ?>
+                                <?php
+                                \uasort($this->data['ytdARegions'], function (array $a, array $b) { return (($b['net_sales'] ?? 0) <=> $a['net_sales'] ?? 0); });
+                                foreach ($this->data['ytdARegions'] as $type => $values) :
+                                ?>
                                     <tr>
                                         <td><?= $this->printHtml($type); ?>
                                         <td><?= $this->getCurrency((int) ($this->data['ytdPYRegions'][$type]['net_sales'] ?? 0), symbol: ''); ?>
