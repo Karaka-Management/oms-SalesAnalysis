@@ -135,17 +135,17 @@ class ItemMapper extends DataMapperFactory
 
             if ($monthIndex === $endCurrentIndex) {
                 if ($period === 1) {
-                    $mtdPYItemAttribute['segment'][$result['segment']] = $temp;
-                    $mtdPYItemAttribute['section'][$result['section']] = $temp;
-                    $mtdPYItemAttribute['sales_group'][$result['sales_group']] = $temp;
+                    $mtdPYItemAttribute['segment'][$result['segment']]             = $temp;
+                    $mtdPYItemAttribute['section'][$result['section']]             = $temp;
+                    $mtdPYItemAttribute['sales_group'][$result['sales_group']]     = $temp;
                     $mtdPYItemAttribute['product_group'][$result['product_group']] = $temp;
-                    $mtdPYItemAttribute['product_type'][$result['product_type']] = $temp;
+                    $mtdPYItemAttribute['product_type'][$result['product_type']]   = $temp;
                 } else {
-                    $mtdAItemAttribute['segment'][$result['segment']] = $temp;
-                    $mtdAItemAttribute['section'][$result['section']] = $temp;
-                    $mtdAItemAttribute['sales_group'][$result['sales_group']] = $temp;
+                    $mtdAItemAttribute['segment'][$result['segment']]             = $temp;
+                    $mtdAItemAttribute['section'][$result['section']]             = $temp;
+                    $mtdAItemAttribute['sales_group'][$result['sales_group']]     = $temp;
                     $mtdAItemAttribute['product_group'][$result['product_group']] = $temp;
-                    $mtdAItemAttribute['product_type'][$result['product_type']] = $temp;
+                    $mtdAItemAttribute['product_type'][$result['product_type']]   = $temp;
                 }
             }
 
@@ -221,27 +221,27 @@ class ItemMapper extends DataMapperFactory
                 }
 
                 if ($period === 1) {
-                    $ytdPYItemAttribute['segment'][$result['segment']]['net_sales']  += $temp['net_sales'];
-                    $ytdPYItemAttribute['segment'][$result['segment']]['net_profit'] += $temp['net_profit'];
-                    $ytdPYItemAttribute['section'][$result['section']]['net_sales']  += $temp['net_sales'];
-                    $ytdPYItemAttribute['section'][$result['section']]['net_profit'] += $temp['net_profit'];
-                    $ytdPYItemAttribute['sales_group'][$result['sales_group']]['net_sales']  += $temp['net_sales'];
-                    $ytdPYItemAttribute['sales_group'][$result['sales_group']]['net_profit'] += $temp['net_profit'];
+                    $ytdPYItemAttribute['segment'][$result['segment']]['net_sales']              += $temp['net_sales'];
+                    $ytdPYItemAttribute['segment'][$result['segment']]['net_profit']             += $temp['net_profit'];
+                    $ytdPYItemAttribute['section'][$result['section']]['net_sales']              += $temp['net_sales'];
+                    $ytdPYItemAttribute['section'][$result['section']]['net_profit']             += $temp['net_profit'];
+                    $ytdPYItemAttribute['sales_group'][$result['sales_group']]['net_sales']      += $temp['net_sales'];
+                    $ytdPYItemAttribute['sales_group'][$result['sales_group']]['net_profit']     += $temp['net_profit'];
                     $ytdPYItemAttribute['product_group'][$result['product_group']]['net_sales']  += $temp['net_sales'];
                     $ytdPYItemAttribute['product_group'][$result['product_group']]['net_profit'] += $temp['net_profit'];
-                    $ytdPYItemAttribute['product_type'][$result['product_type']]['net_sales']  += $temp['net_sales'];
-                    $ytdPYItemAttribute['product_type'][$result['product_type']]['net_profit'] += $temp['net_profit'];
+                    $ytdPYItemAttribute['product_type'][$result['product_type']]['net_sales']    += $temp['net_sales'];
+                    $ytdPYItemAttribute['product_type'][$result['product_type']]['net_profit']   += $temp['net_profit'];
                 } else {
-                    $ytdAItemAttribute['segment'][$result['segment']]['net_sales']  += $temp['net_sales'];
-                    $ytdAItemAttribute['segment'][$result['segment']]['net_profit'] += $temp['net_profit'];
-                    $ytdAItemAttribute['section'][$result['section']]['net_sales']  += $temp['net_sales'];
-                    $ytdAItemAttribute['section'][$result['section']]['net_profit'] += $temp['net_profit'];
-                    $ytdAItemAttribute['sales_group'][$result['sales_group']]['net_sales']  += $temp['net_sales'];
-                    $ytdAItemAttribute['sales_group'][$result['sales_group']]['net_profit'] += $temp['net_profit'];
+                    $ytdAItemAttribute['segment'][$result['segment']]['net_sales']              += $temp['net_sales'];
+                    $ytdAItemAttribute['segment'][$result['segment']]['net_profit']             += $temp['net_profit'];
+                    $ytdAItemAttribute['section'][$result['section']]['net_sales']              += $temp['net_sales'];
+                    $ytdAItemAttribute['section'][$result['section']]['net_profit']             += $temp['net_profit'];
+                    $ytdAItemAttribute['sales_group'][$result['sales_group']]['net_sales']      += $temp['net_sales'];
+                    $ytdAItemAttribute['sales_group'][$result['sales_group']]['net_profit']     += $temp['net_profit'];
                     $ytdAItemAttribute['product_group'][$result['product_group']]['net_sales']  += $temp['net_sales'];
                     $ytdAItemAttribute['product_group'][$result['product_group']]['net_profit'] += $temp['net_profit'];
-                    $ytdAItemAttribute['product_type'][$result['product_type']]['net_sales']  += $temp['net_sales'];
-                    $ytdAItemAttribute['product_type'][$result['product_type']]['net_profit'] += $temp['net_profit'];
+                    $ytdAItemAttribute['product_type'][$result['product_type']]['net_sales']    += $temp['net_sales'];
+                    $ytdAItemAttribute['product_type'][$result['product_type']]['net_profit']   += $temp['net_profit'];
                 }
             }
         }

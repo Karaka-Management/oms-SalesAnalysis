@@ -68,9 +68,8 @@ return ['SalesAnalysis' => [
     'America'         => 'America',
     'Oceania'         => 'Oceania',
     'Africa'          => 'Africa',
-    'YTD'          => 'YTD',
-    'Monthly'          => 'Monthly',
-    'Annually'          => 'Annually',
-    'SalesReps'          => 'Sales Reps',
-    'SalesRep'          => 'Sales Rep',
+    'Monthly'         => 'Monthly',
+    'Annually'        => 'Annually',
+    'SalesReps'       => 'Sales Reps',
+    'SalesRep'        => 'Sales Rep',
 ]];

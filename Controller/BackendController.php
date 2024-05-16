@@ -367,7 +367,7 @@ final class BackendController extends Controller
 
         $view = new View($this->app->l11nManager, $request, $response);
         $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-rep-ytd');
-        $view->data['nav'] = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
+        $view->data['nav']     = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
         $view->data['nav-sub'] = $this->app->moduleManager->get('Navigation')->createNavigationMidSub(1005407001, $request, $response);
 
         $businessStart   = 1;
@@ -445,7 +445,7 @@ final class BackendController extends Controller
 
         $view = new View($this->app->l11nManager, $request, $response);
         $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-rep-mtd');
-        $view->data['nav'] = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
+        $view->data['nav']     = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
         $view->data['nav-sub'] = $this->app->moduleManager->get('Navigation')->createNavigationMidSub(1005407001, $request, $response);
 
         $businessStart   = 1;
@@ -523,7 +523,7 @@ final class BackendController extends Controller
 
         $view = new View($this->app->l11nManager, $request, $response);
         $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-rep-monthly');
-        $view->data['nav'] = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
+        $view->data['nav']     = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
         $view->data['nav-sub'] = $this->app->moduleManager->get('Navigation')->createNavigationMidSub(1005407001, $request, $response);
 
         $businessStart   = 1;
@@ -539,7 +539,7 @@ final class BackendController extends Controller
         $view->data['endCurrent']      = $endCurrent;
         $view->data['startComparison'] = $startComparison;
         $view->data['endComparison']   = $endComparison;
-        $view->data['endCurrentIndex']   = $endCurrentIndex;
+        $view->data['endCurrentIndex'] = $endCurrentIndex;
         $view->data['historyStart']    = $historyStart;
 
         $view->data['salesRep'] = ModelsSalesRepMapper::getAll()
@@ -547,7 +547,6 @@ final class BackendController extends Controller
             ->with('main/account')
             ->where('unit', $this->app->unitId)
             ->executeGetArray();
-
 
         [
             $mtdCurrent,
@@ -599,7 +598,7 @@ final class BackendController extends Controller
 
         $view = new View($this->app->l11nManager, $request, $response);
         $view->setTemplate('/Modules/SalesAnalysis/Theme/Backend/analysis-rep-annually');
-        $view->data['nav'] = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
+        $view->data['nav']     = $this->app->moduleManager->get('Navigation')->createNavigationMid(1005401001, $request, $response);
         $view->data['nav-sub'] = $this->app->moduleManager->get('Navigation')->createNavigationMidSub(1005407001, $request, $response);
 
         $businessStart   = 1;
@@ -622,7 +621,6 @@ final class BackendController extends Controller
             ->with('main/account')
             ->where('unit', $this->app->unitId)
             ->executeGetArray();
-
 
         [
             $view->data['mtdPYClientRep'],

@@ -21,5 +21,5 @@ return ['Navigation' => [
     'Overview'  => 'Übersicht',
     'Products'  => 'Produkte',
     'Regions'   => 'Regionen',
-    'SalesRep'   => 'Verkäufer',
+    'SalesRep'  => 'Verkäufer',
 ]];

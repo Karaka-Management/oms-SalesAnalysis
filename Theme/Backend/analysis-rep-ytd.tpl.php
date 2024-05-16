@@ -12,10 +12,6 @@
  */
 declare(strict_types=1);
 
-use phpOMS\Localization\ISO3166CharEnum;
-use phpOMS\Localization\ISO3166NameEnum;
-use phpOMS\Stdlib\Base\FloatInt;
-
 /**
  * @var \phpOMS\Views\View $this
  */
@@ -42,7 +38,7 @@ echo $this->data['nav-sub']->render();
                     $total = ['py' => 0, 'a' => 0];
                     foreach ($this->data['ytdAClientRep'] as $type => $values) :
                         $total['py'] += $this->data['ytdPYClientRep'][$type]['net_sales'] ?? 0;
-                        $total['a'] += $this->data['ytdAClientRep'][$type]['net_sales'] ?? 0;
+                        $total['a']  += $this->data['ytdAClientRep'][$type]['net_sales'] ?? 0;
                     ?>
                         <tr>
                             <td><?= $this->printHtml($this->data['salesRep'][$type]->code); ?> - <?= $this->printHtml($this->data['salesRep'][$type]->main->name1); ?> <?= $this->printHtml($this->data['salesRep'][$type]->main->name2); ?>
@@ -86,7 +82,7 @@ echo $this->data['nav-sub']->render();
                     $total = ['py' => 0, 'a' => 0];
                     foreach ($this->data['ytdAClientRep'] as $type => $values) :
                         $total['py'] += $this->data['ytdPYClientRep'][$type]['net_profit'] ?? 0;
-                        $total['a'] += $this->data['ytdAClientRep'][$type]['net_profit'] ?? 0;
+                        $total['a']  += $this->data['ytdAClientRep'][$type]['net_profit'] ?? 0;
                     ?>
                         <tr>
                             <td><?= $this->printHtml($this->data['salesRep'][$type]->code); ?> - <?= $this->printHtml($this->data['salesRep'][$type]->main->name1); ?> <?= $this->printHtml($this->data['salesRep'][$type]->main->name2); ?>
