@@ -21,7 +21,6 @@ use phpOMS\Stdlib\Base\FloatInt;
  */
 echo $this->data['nav']->render();
 ?>
-
 <div class="tabview tab-2">
     <div class="box">
         <ul class="tab-links">

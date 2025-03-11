@@ -20,7 +20,6 @@ use phpOMS\Stdlib\Base\FloatInt;
 echo $this->data['nav']->render();
 echo $this->data['nav-sub']->render();
 ?>
-
 <div class="row">
     <div class="col-xs-12 col-lg-6">
         <section class="portlet">
