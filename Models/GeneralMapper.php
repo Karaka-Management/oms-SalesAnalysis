@@ -132,6 +132,79 @@ class GeneralMapper extends DataMapperFactory
         ];
     }
 
+    public static function ytdSalesProfit(
+        SmartDateTime $historyStart,
+        \DateTime $endCurrent,
+        int $businessStart = 1
+    ) : array {
+        $query = new Builder(self::$db);
+        $query->raw(
+            'SELECT
+                YEAR(billing_bill_performance_date) as salesyear,
+                MONTH(billing_bill_performance_date) as salesmonth,
+                SUM(billing_bill_netsales * billing_type_sign) as netsales,
+                SUM(billing_bill_netprofit * billing_type_sign) as netprofit
+            FROM billing_bill
+            LEFT JOIN billing_type
+                ON billing_bill_type = billing_type_id
+            WHERE
+                billing_type_transfer_type = ' . BillTransferType::SALES . '
+                AND billing_type_accounting = 1
+                AND billing_bill_status = ' . BillStatus::ARCHIVED . '
+                AND billing_bill_performance_date >= \'' . $historyStart->format('Y-m-d') . '\'
+                AND billing_bill_performance_date <= \'' . $endCurrent->format('Y-m-d') . '\'
+            GROUP BY
+                YEAR(billing_bill_performance_date),
+                MONTH(billing_bill_performance_date)
+            ORDER BY
+                YEAR(billing_bill_performance_date) ASC,
+                MONTH(billing_bill_performance_date) ASC'
+        );
+
+        $results = $query->execute()?->fetchAll(\PDO::FETCH_ASSOC) ?? [];
+
+        $ytdSales = [];
+        $currentYear = (int) $endCurrent->format('Y');
+        $currentMonth = (int) $endCurrent->format('m');
+
+        // Initialize the YTD sales array
+        for ($i = 1; $i < 11; ++$i) {
+            $ytdSales[$i] = [
+                'net_sales'  => 0,
+                'net_profit' => 0,
+                'year'       => $historyStart->format('Y'),
+            ];
+
+            $historyStart->smartModify(1);
+        }
+
+        $historyStart->smartModify(-10);
+
+        // Calculate YTD sales and profit for each year
+        foreach ($results as $result) {
+            $salesYear = (int) $result['salesyear'];
+            $salesMonth = (int) $result['salesmonth'];
+
+            // Only consider months up to the current month for each year
+            if ($salesYear < $currentYear && $salesMonth > $currentMonth) {
+                continue;
+            }
+
+            $yearDiff = $salesYear - (int) $historyStart->format('Y');
+            $period = $yearDiff + 1;
+
+            if ($period > 10) {
+                continue;
+            }
+
+            // Accumulate YTD values
+            $ytdSales[$period]['net_sales']  += (int) $result['netsales'];
+            $ytdSales[$period]['net_profit'] += (int) $result['netprofit'];
+        }
+
+        return $ytdSales;
+    }
+
     /**
      * @todo Probably re-implement, still used?
      */

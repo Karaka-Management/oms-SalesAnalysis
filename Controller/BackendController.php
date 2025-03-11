@@ -105,6 +105,7 @@ final class BackendController extends Controller
         );
 
         $historyStart              = $startOfYear->createModify(-9);
+        $view->data['ytdSales']    = GeneralMapper::ytdSalesProfit($historyStart, $endCurrent, $businessStart);
         $view->data['annualSales'] = GeneralMapper::annualSalesProfit($historyStart, $endCurrent, $businessStart);
 
         [

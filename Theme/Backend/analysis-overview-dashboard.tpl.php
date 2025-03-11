@@ -91,7 +91,7 @@ echo $this->data['nav']->render();
 -->
 
 <div class="row">
-    <div class="col-xs-12 col-lg-6">
+    <div class="col-xs-12 col-lg-4">
         <section class="portlet">
             <div class="portlet-head">
                 <?= $this->getHtml('SalesProfit'); ?> (<?= $this->getHtml('monthly'); ?>)
@@ -281,7 +281,136 @@ echo $this->data['nav']->render();
         </section>
     </div>
 
-    <div class="col-xs-12 col-lg-6">
+    <div class="col-xs-12 col-lg-4">
+        <section class="portlet">
+            <div class="portlet-head">
+                <?= $this->getHtml('SalesProfit'); ?> (<?= $this->getHtml('YTD'); ?>)
+            </div>
+            <?php $sales = $this->data['ytdSales']; ?>
+            <div class="portlet-body">
+                <canvas id="sales-profit-ytd" data-chart='{
+                    "type": "bar",
+                    "data": {
+                        "labels": [
+                            <?php
+                                $temp = [];
+                                for ($i = 1; $i < 11; ++$i) {
+                                    $temp[] = $sales[$i]['year'];
+                                }
+                                echo \implode(',', $temp);
+                            ?>
+                        ],
+                        "datasets": [
+                            {
+                                "label": "<?= $this->getHtml('Profit'); ?>",
+                                "type": "line",
+                                "data": [
+                                    <?php
+                                        $temp = [];
+                                        for ($i = 1; $i < 11; ++$i) {
+                                            if ($sales[$i]['net_sales'] === null || $sales[$i]['net_profit'] === null) {
+                                                $temp[] = 'null';
+
+                                                continue;
+                                            }
+
+                                            $temp[] = $sales[$i]['net_sales'] == 0
+                                                ? 0
+                                                : $sales[$i]['net_profit'] * 100 / $sales[$i]['net_sales'];
+                                        }
+                                        echo \implode(',', $temp);
+                                    ?>
+                                ],
+                                "yAxisID": "y1",
+                                "fill": false,
+                                "tension": 0.0,
+                                "borderColor": "rgb(46, 204, 113)",
+                                "backgroundColor": "rgb(46, 204, 113)"
+                            },
+                            {
+                                "label": "<?= $this->getHtml('Sales'); ?>",
+                                "type": "bar",
+                                "data": [
+                                    <?php
+                                        $temp = [];
+                                        for ($i = 1; $i < 11; ++$i) {
+                                            $temp[] = $sales[$i]['net_sales'] / FloatInt::DIVISOR;
+                                        }
+                                        echo \implode(',', $temp);
+                                    ?>
+                                ],
+                                "yAxisID": "y",
+                                "fill": false,
+                                "tension": 0.0,
+                                "backgroundColor": "rgb(54, 162, 235)"
+                            }
+                        ]
+                    },
+                    "options": {
+                        "responsive": true,
+                        "scales": {
+                            "x": {
+                                "title": {
+                                    "display": true,
+                                    "text": "<?= $this->getHtml('Months'); ?>"
+                                }
+                            },
+                            "y": {
+                                "title": {
+                                    "display": true,
+                                    "text": "<?= $this->getHtml('Sales'); ?>"
+                                },
+                                "display": true,
+                                "position": "left"
+                            },
+                            "y1": {
+                                "title": {
+                                    "display": true,
+                                    "text": "<?= $this->getHtml('Profit'); ?> %"
+                                },
+                                "display": true,
+                                "position": "right",
+                                "scaleLabel": {
+                                    "display": true,
+                                    "labelString": "<?= $this->getHtml('Profit'); ?>"
+                                },
+                                "grid": {
+                                    "drawOnChartArea": false
+                                }
+                            }
+                        }
+                    }
+                }'></canvas>
+                <div class="more-container">
+                    <input id="more-customer-sales-ytd" class="more" type="checkbox" name="more-container">
+                    <label class="more" for="more-customer-sales-ytd">
+                        <span><?= $this->getHtml('Data'); ?></span>
+                        <i class="g-icon expand">chevron_right</i>
+                    </label>
+                    <div class="slider more">
+                    <table class="default sticky">
+                        <thead>
+                            <tr>
+                                <td><?= $this->getHtml('Year'); ?>
+                                <td><?= $this->getHtml('Sales'); ?>
+                                <td><?= $this->getHtml('Profit'); ?>
+                        <tbody>
+                        <?php
+                        foreach ($sales as $values) :
+                        ?>
+                            <tr>
+                                <td><?= $this->printHtml($values['year']); ?>
+                                <td><?= $this->getCurrency(((int) $values['net_sales']) / FloatInt::DIVISOR, symbol: ''); ?>
+                                <td><?= \sprintf('%.2f', $values['net_sales'] == 0 ? 0 : $values['net_profit'] * 100 / $values['net_sales']); ?> %
+                        <?php endforeach; ?>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="col-xs-12 col-lg-4">
         <section class="portlet">
             <div class="portlet-head">
                 <?= $this->getHtml('SalesProfit'); ?> (<?= $this->getHtml('annually'); ?>)

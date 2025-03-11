@@ -74,4 +74,6 @@ omsApp.Modules.SalesAnalysis = class {
     };
 };
 
+// @bug We cannot guarantee that this is run after the app is setup. Fix it
+//  Additionally, this way is extremely ugly!!!
 window.omsApp.moduleManager.get('SalesAnalysis').bind();
